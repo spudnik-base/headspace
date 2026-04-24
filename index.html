@@ -1558,8 +1558,8 @@ function invertTilt(){
   // Flip the current session too: sign, rest, thresholds all negate
   S.calib.axisSign *= -1;
   S.calib.rest *= -1;
-  S.calib.thCorrect = S.calib.rest + 28;
-  S.calib.thPass = S.calib.rest - 28;
+  S.calib.thCorrect = S.calib.rest + 22;
+  S.calib.thPass = S.calib.rest - 22;
   S.tiltMotion = 0;
   const btn=document.querySelector('.game-swap-btn');
   if(btn) btn.classList.toggle('flipped', next==='1');
@@ -1630,8 +1630,8 @@ function finalizeCalibration(){
     rest=sorted[Math.floor(sorted.length/2)];
   }
   S.calib.rest=rest;
-  S.calib.thCorrect=rest+28;
-  S.calib.thPass=rest-28;
+  S.calib.thCorrect=rest+22;
+  S.calib.thPass=rest-22;
 }
 
 function launchGame(){
