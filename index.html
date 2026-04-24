@@ -7,7 +7,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0A0A0A">
 <title>HeadSpace · Manga IB Edition</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ── MANGA VARIABLES ── */
@@ -22,6 +27,8 @@
   --yellow-dim: rgba(245,200,0,0.12);
   --blue-ink: #001F5B;
   --white: #FEFCF8;
+  --warn: #FF8C00;
+  --info: #7BD4FF;
   --gutter: 6px;
   --b3: 3px solid var(--ink);
   --b4: 4px solid var(--ink);
@@ -32,6 +39,25 @@
   --dots-lg: radial-gradient(circle, rgba(10,10,10,0.12) 1.5px, transparent 1.5px) 0 0 / 10px 10px;
   --dots-red: radial-gradient(circle, rgba(200,0,26,0.22) 1px, transparent 1px) 0 0 / 7px 7px;
   --dots-yel: radial-gradient(circle, rgba(245,200,0,0.35) 1.5px, transparent 1.5px) 0 0 / 8px 8px;
+}
+
+body.theme-pastel {
+  --ink: #2E221C;
+  --paper: #FBEEE1;
+  --paper2: #F3DEC7;
+  --panel: #FFF8EE;
+  --red: #D97A6C;
+  --red-dim: rgba(217,122,108,0.12);
+  --yellow: #F2CC6B;
+  --yellow-dim: rgba(242,204,107,0.22);
+  --blue-ink: #6A7BA8;
+  --white: #FFFDF7;
+  --warn: #E8A16A;
+  --info: #A5C4D8;
+  --dots-sm: radial-gradient(circle, rgba(46,34,28,0.16) 1px, transparent 1px) 0 0 / 6px 6px;
+  --dots-lg: radial-gradient(circle, rgba(46,34,28,0.1) 1.5px, transparent 1.5px) 0 0 / 10px 10px;
+  --dots-red: radial-gradient(circle, rgba(217,122,108,0.24) 1px, transparent 1px) 0 0 / 7px 7px;
+  --dots-yel: radial-gradient(circle, rgba(242,204,107,0.42) 1.5px, transparent 1.5px) 0 0 / 8px 8px;
 }
 
 *{ box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -126,7 +152,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   color: var(--ink); opacity: 0.45; margin-bottom: 14px; text-transform: uppercase;
 }
 .subject-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); flex: 1;
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: var(--gutter); flex: 1;
 }
 .subject-card {
   background: var(--panel); border: var(--b3);
@@ -220,7 +246,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   position: absolute; left: 0; top: 0; bottom: 0;
   background: var(--yellow); transition: width 1s linear, background-color 0.3s;
 }
-.game-timer-fill.warn { background: #FF8C00; }
+.game-timer-fill.warn { background: var(--warn); }
 .game-timer-fill.danger { background: var(--red); }
 .game-scores {
   display: flex; align-items: center; gap: 0;
@@ -238,7 +264,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   color: var(--white); padding: 0 18px; min-width: 72px; text-align: center;
   border-right: var(--b3); height: 100%; display: flex; align-items: center; justify-content: center;
 }
-.game-countdown.warn { color: #FF8C00; }
+.game-countdown.warn { color: var(--warn); }
 .game-countdown.danger { color: var(--red); animation: cdanger 0.5s ease-in-out infinite alternate; }
 @keyframes cdanger { from{ opacity:1 } to{ opacity:0.4 } }
 
@@ -364,7 +390,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 .stat-lbl { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; opacity:0.5; color:var(--white); }
 .stat-cell.c .stat-val { color:var(--yellow); }
 .stat-cell.p .stat-val { color:var(--red); }
-.stat-cell.pct .stat-val { color:#7BD4FF; }
+.stat-cell.pct .stat-val { color:var(--info); }
 .summary-play-again { margin-top:auto; position:relative;z-index:1; }
 
 .summary-right {
@@ -419,6 +445,22 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   font-family:var(--font-bang); font-size:18px; letter-spacing:2px; cursor:pointer;
   margin-top:10px; transition:background 0.1s;
 }
+.teacher-actions { display:flex; gap:8px; margin-top:10px; }
+.teacher-actions .teacher-add-btn { margin-top:0; flex:1; }
+.teacher-csv-btn {
+  background:var(--panel); color:var(--ink); border:var(--b2);
+  padding:8px 14px; font-family:var(--font-bang); font-size:14px; letter-spacing:1.5px;
+  cursor:pointer; transition:background 0.1s; display:inline-flex; align-items:center; gap:6px;
+  white-space:nowrap;
+}
+.teacher-csv-btn:hover { background:var(--paper2); }
+.teacher-csv-btn:active { background:var(--yellow); }
+.teacher-hint {
+  font-size:12px; color:var(--ink); opacity:0.6; font-weight:600;
+  min-height:16px; margin-top:6px; letter-spacing:0.3px;
+}
+.teacher-hint.ok { color:#0a6b1a; opacity:1; }
+.teacher-hint.err { color:var(--red); opacity:1; }
 .teacher-add-btn:hover { background:#333; }
 .custom-items { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
 .custom-item {
@@ -452,6 +494,73 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 .perm-title { font-family:var(--font-bang); font-size:36px; letter-spacing:3px; color:var(--ink); }
 .perm-desc { font-size:14px; color:var(--ink); opacity:0.6; text-align:center; max-width:320px; line-height:1.6; font-weight:500; }
 
+/* ── SL / HL TOGGLE ── */
+.sl-hl-toggle {
+  display: flex; border: var(--b2); border-radius: 6px; overflow: hidden;
+  background: var(--panel);
+}
+.sl-hl-opt {
+  flex: 1; background: none; border: none;
+  color: var(--ink); opacity: 0.55;
+  font-family: var(--font-bang); font-size: 14px; letter-spacing: 2px;
+  padding: 10px 6px; cursor: pointer; transition: all 0.12s;
+}
+.sl-hl-opt.active { background: var(--yellow); opacity: 1; box-shadow: inset 0 0 0 2px var(--ink); }
+.sl-hl-opt:hover:not(.active) { background: var(--paper2); opacity: 0.85; }
+
+/* ── THEME TOGGLE ── */
+.theme-toggle {
+  display: flex; border: 2px solid rgba(255,255,255,0.25);
+  border-radius: 8px; overflow: hidden; margin-top: 10px;
+  position: relative; z-index: 1; background: rgba(0,0,0,0.2);
+}
+.theme-opt {
+  flex: 1; background: none; border: none;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-bang); font-size: 13px; letter-spacing: 2px;
+  padding: 8px 4px; cursor: pointer; transition: all 0.15s;
+}
+.theme-opt.active { background: var(--yellow); color: var(--ink); }
+.theme-opt:hover:not(.active) { color: var(--yellow); }
+
+/* ── CARD FLIP (advance animation) ── */
+.term-card-wrap { perspective: 1000px; }
+.term-card-manga.card-flip { animation: cardFlip 0.32s cubic-bezier(.4,.0,.2,1); backface-visibility: hidden; }
+@keyframes cardFlip {
+  0%   { transform: rotateY(0deg);    box-shadow: 6px 6px 0 var(--ink); }
+  45%  { transform: rotateY(90deg);   box-shadow: 2px 6px 0 var(--ink); }
+  55%  { transform: rotateY(-90deg);  box-shadow: 2px 6px 0 var(--ink); }
+  100% { transform: rotateY(0deg);    box-shadow: 6px 6px 0 var(--ink); }
+}
+
+/* ── PIN SCREEN ── */
+#screen-pin { background: var(--paper); border: var(--b4); flex-direction: column; background-image: var(--dots-sm); }
+.pin-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 20px; gap: 10px; }
+.pin-subtitle { font-size: 12px; font-weight: 700; color: var(--ink); opacity: 0.5; letter-spacing: 2px; text-transform: uppercase; }
+.pin-display {
+  font-family: var(--font-bang); font-size: 44px; letter-spacing: 14px;
+  color: var(--ink); background: var(--white); border: var(--b3);
+  padding: 4px 24px 4px 38px; min-width: 180px; text-align: center;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.pin-display.shake { animation: pinShake 0.35s ease; }
+@keyframes pinShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 56px); gap: 6px; }
+.pin-key {
+  font-family: var(--font-bang); font-size: 22px; letter-spacing: 1px;
+  background: var(--panel); border: var(--b2); padding: 8px 0;
+  cursor: pointer; transition: transform 0.08s, background 0.1s;
+  color: var(--ink);
+}
+.pin-key:hover { background: var(--paper2); }
+.pin-key:active { transform: scale(0.94); background: var(--yellow); }
+.pin-key.wide { grid-column: span 1; }
+.pin-key.action { background: var(--ink); color: var(--yellow); font-size: 14px; letter-spacing: 2px; }
+.pin-key.action:hover { background: #222; }
+.pin-hint { font-size: 12px; color: var(--red); font-weight: 700; min-height: 16px; letter-spacing: 0.5px; }
+.pin-reset { background: none; border: none; font-size: 11px; color: var(--ink); opacity: 0.5; cursor: pointer; text-decoration: underline; font-weight: 600; letter-spacing: 1px; }
+.pin-reset:hover { opacity: 0.9; }
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{ width:5px; }
 ::-webkit-scrollbar-track{ background:transparent; }
@@ -475,7 +584,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <path d="M60 30 Q65 20 72 22" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
   </svg>
   <div class="rotate-title">ROTATE YOUR <span>DEVICE</span></div>
-  <div class="rotate-sub">HeadSpace is a landscape game — turn sideways to play</div>
+  <div class="rotate-sub">HeadSpace is a landscape game. Turn sideways to play.</div>
 </div>
 
 <div id="app-wrap" style="position:relative;width:100%;height:100%;">
@@ -488,12 +597,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <div class="home-edition">IB EDITION</div>
     <div class="home-speech">
       <div class="speech-title">PICK YOUR SUBJECT</div>
-      <div class="speech-body">Tap a subject below, then hit Start. Hold phone to forehead, screen out — your team guesses the term!</div>
+      <div class="speech-body">Tap a subject below, then hit Start. Hold phone to forehead, screen out. Your team guesses the term.</div>
     </div>
-    <button class="home-teacher-btn" onclick="showScreen('screen-teacher')">
+    <button class="home-teacher-btn" onclick="openTeacher()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
       TEACHER MODE
     </button>
+    <div class="theme-toggle" role="radiogroup" aria-label="Theme">
+      <button class="theme-opt active" data-theme="ink" onclick="setTheme('ink')">INK</button>
+      <button class="theme-opt" data-theme="pastel" onclick="setTheme('pastel')">PASTEL</button>
+    </div>
   </div>
   <div class="home-right">
     <div class="home-right-header">SELECT SUBJECT ·</div>
@@ -516,7 +629,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <div class="topic-chips" id="topic-chips"></div>
   </div>
   <div class="setup-right">
-    <div style="flex:1;">
+    <div style="flex:1;overflow-y:auto;">
       <div class="setup-section" style="margin-bottom:14px;">Round timer</div>
       <div class="timer-grid">
         <div class="timer-opt" onclick="selectTimer(30,this)"><span class="timer-val">30</span><span class="timer-unit">SECONDS</span></div>
@@ -524,8 +637,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
         <div class="timer-opt" onclick="selectTimer(90,this)"><span class="timer-val">90</span><span class="timer-unit">SECONDS</span></div>
         <div class="timer-opt" onclick="selectTimer(120,this)"><span class="timer-val">2</span><span class="timer-unit">MINUTES</span></div>
       </div>
+      <div id="setup-level" style="display:none;">
+        <div class="setup-section" style="margin:16px 0 8px;">Level</div>
+        <div class="sl-hl-toggle">
+          <button class="sl-hl-opt" data-level="sl" onclick="setLevel('sl')">SL ONLY</button>
+          <button class="sl-hl-opt active" data-level="hl" onclick="setLevel('hl')">SL + HL</button>
+        </div>
+      </div>
     </div>
-    <button class="btn-manga" onclick="startGame()" style="width:100%;text-align:center;display:block;">FIGHT! ›</button>
+    <button class="btn-manga" onclick="startGame()" style="width:100%;text-align:center;display:block;margin-top:12px;">FIGHT! ›</button>
   </div>
 </div>
 
@@ -552,7 +672,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   <div class="cdown-ring">
     <div class="cdown-num" id="cdown-num">3</div>
   </div>
-  <div class="cdown-hint">HOLD TO FOREHEAD — SCREEN FACING OUT!</div>
+  <div class="cdown-hint">HOLD TO FOREHEAD. SCREEN FACING OUT!</div>
   <div class="cdown-mode" id="cdown-mode"></div>
 </div>
 
@@ -618,6 +738,34 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   </div>
 </div>
 
+<!-- ══ SCREEN: PIN ══ -->
+<div class="screen" id="screen-pin">
+  <div class="screen-topbar">
+    <button class="back-btn" onclick="showScreen('screen-home')">← BACK</button>
+    <div class="topbar-title" id="pin-title">ENTER TEACHER PIN</div>
+  </div>
+  <div class="pin-body">
+    <div class="pin-subtitle" id="pin-subtitle">4 digits</div>
+    <div class="pin-display" id="pin-display">●●●●</div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="pinTap(1)">1</button>
+      <button class="pin-key" onclick="pinTap(2)">2</button>
+      <button class="pin-key" onclick="pinTap(3)">3</button>
+      <button class="pin-key" onclick="pinTap(4)">4</button>
+      <button class="pin-key" onclick="pinTap(5)">5</button>
+      <button class="pin-key" onclick="pinTap(6)">6</button>
+      <button class="pin-key" onclick="pinTap(7)">7</button>
+      <button class="pin-key" onclick="pinTap(8)">8</button>
+      <button class="pin-key" onclick="pinTap(9)">9</button>
+      <button class="pin-key action" onclick="pinClear()">CLR</button>
+      <button class="pin-key" onclick="pinTap(0)">0</button>
+      <button class="pin-key action" onclick="pinBackspace()">◂</button>
+    </div>
+    <div class="pin-hint" id="pin-hint"></div>
+    <button class="pin-reset" onclick="resetTeacherPin()">FORGOT PIN?</button>
+  </div>
+</div>
+
 <!-- ══ SCREEN: TEACHER ══ -->
 <div class="screen" id="screen-teacher">
   <div class="screen-topbar">
@@ -627,14 +775,22 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   <div class="teacher-inner">
     <div class="teacher-left">
       <div class="teacher-title">ADD TERMS</div>
-      <div class="teacher-sub">One term per line. These play as a custom deck separate from IB content. Perfect for pre-exam vocab or specific unit revision.</div>
+      <div class="teacher-sub">Paste one term per line, or upload a CSV. Column 1 is the term, optional column 2 is a category label. These play as a custom deck separate from IB content.</div>
       <textarea class="teacher-textarea" id="teacher-input" placeholder="Mitosis&#10;Photosynthesis&#10;Schlieffen Plan&#10;The Great Gatsby&#10;Nash Equilibrium..."></textarea>
-      <button class="teacher-add-btn" onclick="addCustomTerms()">+ ADD TO DECK</button>
+      <input type="file" id="teacher-csv" accept=".csv,.txt,text/csv,text/plain" style="display:none" onchange="onCsvFile(event)">
+      <div class="teacher-actions">
+        <button class="teacher-add-btn" onclick="addCustomTerms()">+ ADD TO DECK</button>
+        <button class="teacher-csv-btn" onclick="document.getElementById('teacher-csv').click()" title="Upload .csv or .txt">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          UPLOAD CSV
+        </button>
+      </div>
+      <div class="teacher-hint" id="teacher-hint"></div>
     </div>
     <div class="teacher-right">
       <div class="teacher-title" id="custom-label" style="margin-bottom:10px;">CUSTOM DECK (0)</div>
       <div class="custom-items" id="custom-items">
-        <div class="empty-msg">No terms added yet — paste your list on the left.</div>
+        <div class="empty-msg">No terms added yet. Paste your list on the left.</div>
       </div>
       <button class="btn-manga" style="width:100%;display:block;" onclick="startCustomGame()">PLAY CUSTOM DECK ›</button>
     </div>
@@ -668,85 +824,105 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 </div><!-- /app-wrap -->
 
 <script>
-// ══ IB CONTENT: 30-40 terms per subject ══
+// IB CONTENT: 50+ validated syllabus terms per subject.
 const IB = {
   "Biology":{icon:"bio",topics:{
-    "Cell Biology":["Cell membrane","Mitosis","Meiosis","Osmosis","Active transport","Endocytosis","Exocytosis","ATP synthesis","Ribosome","Endoplasmic reticulum","Golgi apparatus","Cell wall","Lysosome","Mitochondria","Cell cycle","Apoptosis","Prokaryote","Eukaryote"],
-    "Genetics":["Allele","Genotype","Phenotype","Codominance","Epistasis","Crossing over","Hardy-Weinberg","Gene mutation","Transcription","Translation","Codon","Operon","Epigenetics","Gel electrophoresis","PCR","Karyotype","Plasmid"],
-    "Ecology":["Trophic level","Biomass pyramid","Ecological succession","Carrying capacity","Keystone species","Eutrophication","Biodiversity index","Symbiosis","Limiting factor","Nutrient cycle","Ecological niche","Biome","Population dynamics","Invasive species","Biomagnification"],
-    "Evolution":["Natural selection","Allopatric speciation","Analogous structures","Phylogenetic tree","Genetic drift","Adaptive radiation","Punctuated equilibrium","Vestigial structures","Sexual selection","Founder effect","Bottleneck effect","Gene pool","Cladogram","Convergent evolution"]
-  }},
+    "Cells":["Cell membrane","Mitosis","Meiosis","Osmosis","Active transport","Facilitated diffusion","Endocytosis","Exocytosis","Prokaryote","Eukaryote","Ribosome","Mitochondria","Cell wall","Stem cell","Cell differentiation","Fluid mosaic model","Endosymbiotic theory"],
+    "Biological Molecules":["Monosaccharide","Polysaccharide","Lipid","Triglyceride","Phospholipid","Amino acid","Protein","Peptide bond","DNA","RNA","Nucleotide","Complementary base pairing","Condensation reaction","Hydrolysis","Quaternary structure"],
+    "Metabolism":["ATP","Aerobic respiration","Anaerobic respiration","Fermentation","Glycolysis","Chlorophyll","Light-dependent reactions","Calvin cycle","Thylakoid","Stroma","Limiting factor","Krebs cycle","Electron transport chain","Oxidative phosphorylation","RuBisCO"],
+    "Human Physiology":["Homeostasis","Heart","Artery","Vein","Capillary","Haemoglobin","Antibody","Vaccination","Alveolus","Gas exchange","Ventilation","Insulin","Hormone","Neuron","Synapse","Action potential","Enzyme","Peristalsis","Negative feedback","Cardiac cycle","Nephron"],
+    "Ecology":["Ecosystem","Population","Community","Trophic level","Biomass pyramid","Carrying capacity","Keystone species","Biodiversity","Symbiosis","Eutrophication","Biomagnification","Ecological succession","Nitrogen cycle","Carbon cycle","Greenhouse effect","Ecological niche","Invasive species"],
+    "Evolution & Natural Selection":["Natural selection","Mutation","Allele","Sexual selection","Artificial selection","Speciation","Genetic drift","Founder effect","Bottleneck effect","Gene pool","Phylogenetic tree","Adaptive radiation","Analogous structure","Homologous structure","Fossil record","Hardy-Weinberg","Allopatric speciation","Punctuated equilibrium","Cladogram"],
+    "Plants":["Xylem","Phloem","Stomata","Transpiration","Guard cell","Leaf structure","Translocation","Cohesion-tension theory","Meristem","Auxin","Vascular bundle","Palisade mesophyll","Root pressure"]
+  }, hl:[
+    "Fluid mosaic model","Endosymbiotic theory",
+    "Condensation reaction","Hydrolysis","Quaternary structure",
+    "Krebs cycle","Electron transport chain","Oxidative phosphorylation","RuBisCO",
+    "Negative feedback","Cardiac cycle","Nephron",
+    "Ecological niche","Invasive species",
+    "Hardy-Weinberg","Allopatric speciation","Punctuated equilibrium","Cladogram",
+    "Translocation","Cohesion-tension theory","Meristem","Auxin","Vascular bundle","Palisade mesophyll","Root pressure"
+  ]},
   "Chemistry":{icon:"chem",topics:{
-    "Atomic Structure":["Electron configuration","Quantum number","Orbital","Isotope","Mass spectrometry","Ionisation energy","Atomic radius","Electronegativity","Electron affinity","Periodic trend","Aufbau principle","Shielding effect","First ionisation energy"],
-    "Bonding":["Covalent bond","Ionic bond","Metallic bonding","Hydrogen bond","Van der Waals forces","Lewis structure","Resonance","Bond polarity","Lattice enthalpy","Molecular geometry","VSEPR theory","Dipole moment","Hybridisation"],
-    "Reactions":["Le Chatelier's principle","Activation energy","Rate constant","Buffer solution","Titration endpoint","Standard enthalpy","Gibbs free energy","Hess's law","Equilibrium constant","Arrhenius equation","Collision theory","Half-equation","Redox reaction","Disproportionation"],
-    "Organic":["Alkane","Alkene","Benzene","Ester","Aldehyde","Ketone","Carboxylic acid","Markovnikov's rule","Stereoisomers","Nucleophilic substitution","Electrophilic addition","Condensation polymer","Optical isomer","Free radical"]
+    "Atomic Structure":["Electron configuration","Quantum number","Orbital","Isotope","Mass spectrometry","Ionisation energy","Atomic radius","Electronegativity","Electron affinity","Periodic trend","Aufbau principle","Shielding effect","Emission spectrum","Hund's rule"],
+    "Bonding":["Covalent bond","Ionic bond","Metallic bonding","Hydrogen bond","Van der Waals forces","Lewis structure","Resonance","Bond polarity","Lattice enthalpy","Molecular geometry","VSEPR theory","Dipole moment","Hybridisation","Giant covalent structure","London dispersion"],
+    "Reactions":["Le Chatelier's principle","Activation energy","Rate constant","Buffer solution","Titration endpoint","Standard enthalpy","Gibbs free energy","Hess's law","Equilibrium constant","Arrhenius equation","Collision theory","Redox reaction","Disproportionation","Bond enthalpy","Rate equation","Standard electrode potential","Voltaic cell"],
+    "Organic":["Alkane","Alkene","Alkyne","Benzene","Ester","Aldehyde","Ketone","Carboxylic acid","Amine","Amide","Markovnikov's rule","Stereoisomer","Nucleophilic substitution","Electrophilic addition","Condensation polymer","Optical isomer","Free radical","Addition polymer"]
   }},
   "Physics":{icon:"phys",topics:{
-    "Mechanics":["Newton's third law","Conservation of momentum","Torque","Centripetal force","Projectile motion","Simple harmonic motion","Gravitational potential energy","Hooke's law","Terminal velocity","Escape velocity","Impulse","Centre of mass","Elastic collision"],
-    "Waves":["Doppler effect","Diffraction","Interference","Polarisation","Standing wave","Superposition","Total internal reflection","Refractive index","Snell's law","Young's double slit","Resonance","Phase difference","Path difference","Coherence"],
-    "Electricity":["Ohm's law","Kirchhoff's voltage law","Capacitance","Internal resistance","EMF","Magnetic flux","Faraday's law","Lenz's law","Transformer","AC circuit","Root mean square","Power dissipation","Resistivity","Drift velocity"],
-    "Modern Physics":["Photoelectric effect","Wave-particle duality","Half-life","Binding energy","Nuclear fission","Nuclear fusion","De Broglie wavelength","Heisenberg uncertainty","Pair production","Radioactive decay","Mass defect","Nuclear equation","Standard model","Quark"]
+    "Mechanics":["Newton's third law","Conservation of momentum","Torque","Centripetal force","Projectile motion","Simple harmonic motion","Gravitational potential energy","Hooke's law","Terminal velocity","Escape velocity","Impulse","Centre of mass","Elastic collision","Angular velocity","Moment of inertia"],
+    "Waves & Optics":["Doppler effect","Diffraction","Interference","Polarisation","Standing wave","Superposition","Total internal reflection","Refractive index","Snell's law","Young's double slit","Resonance","Phase difference","Path difference","Coherence","Single slit diffraction","Thin film interference"],
+    "Electricity & Magnetism":["Ohm's law","Kirchhoff's voltage law","Capacitance","Internal resistance","Electromotive force","Magnetic flux","Faraday's law","Lenz's law","Transformer","AC circuit","Root mean square","Resistivity","Drift velocity","Hall effect","Lorentz force"],
+    "Modern & Thermal":["Photoelectric effect","Wave-particle duality","Half-life","Binding energy","Nuclear fission","Nuclear fusion","De Broglie wavelength","Heisenberg uncertainty","Pair production","Radioactive decay","Mass defect","Standard model","Quark","Specific heat capacity","Latent heat","Ideal gas law","Entropy","Carnot cycle"]
   }},
-  "Mathematics":{icon:"math",topics:{
-    "Calculus":["Differentiation","Chain rule","Product rule","Integration by parts","L'Hôpital's rule","Taylor series","Implicit differentiation","Riemann sum","Related rates","Differential equation","Fundamental theorem","Maclaurin series","Euler's method"],
-    "Statistics":["Standard deviation","Null hypothesis","P-value","Pearson correlation","Regression line","Confidence interval","Chi-squared test","Central limit theorem","Bayes' theorem","Binomial distribution","Normal distribution","Type I error","Unbiased estimator"],
-    "Algebra":["Complex number","Matrix multiplication","Determinant","Eigenvalue","Logarithm","Permutation","Combination","Geometric sequence","Proof by induction","De Moivre's theorem","Modulus-argument form","Partial fractions","Rational function"],
-    "Geometry":["Vector cross product","Dot product","Direction cosines","Parametric equation","Arc length","Surface of revolution","Implicit differentiation","Polar coordinates","Curvature","Gradient vector"]
+  "Math AA":{icon:"math",topics:{
+    "Number & Algebra":["Arithmetic sequence","Geometric sequence","Sigma notation","Binomial theorem","Logarithm","Complex number","De Moivre's theorem","Modulus-argument form","Partial fractions","Proof by induction","Argand diagram","Permutation","Combination","Exponential form"],
+    "Functions":["Quadratic function","Rational function","Composite function","Inverse function","Polynomial","Asymptote","Even function","Odd function","Factor theorem","Remainder theorem","Discriminant","Transformation of graphs"],
+    "Geometry & Trigonometry":["Vector cross product","Dot product","Scalar projection","Vector equation of a line","Vector equation of a plane","Unit circle","Double angle formula","Radian measure","Arc length","Sector area","Sine rule","Cosine rule","Compound angle formula"],
+    "Statistics & Probability":["Standard deviation","Variance","Normal distribution","Binomial distribution","Bayes' theorem","Expected value","Probability density function","Conditional probability","Central limit theorem","Null hypothesis","Confidence interval","Regression line","Pearson correlation"],
+    "Calculus":["Differentiation","Chain rule","Product rule","Quotient rule","Implicit differentiation","Integration by parts","Integration by substitution","Related rates","L'Hôpital's rule","Maclaurin series","Fundamental theorem of calculus","Euler's method","Slope field","Separation of variables","Differential equation","Volume of revolution"]
+  }},
+  "Math AI":{icon:"math",topics:{
+    "Number & Algebra":["Scientific notation","Logarithm","Exponential model","Arithmetic sequence","Geometric sequence","Compound interest","Amortisation","Annuity","Sigma notation","Approximation error","Significant figures"],
+    "Functions":["Linear function","Quadratic function","Exponential function","Logarithmic function","Cubic function","Piecewise function","Sinusoidal model","Logistic model","Inverse function","Asymptote","Transformation of graphs"],
+    "Geometry & Trigonometry":["Voronoi diagram","Adjacency matrix","Unit circle","Sine rule","Cosine rule","Volume of a cone","Surface area of a sphere","Radian","Arc length","Sector area","Vector equation of a line","Dot product","3D distance formula"],
+    "Statistics & Probability":["Standard deviation","Variance","Normal distribution","Binomial distribution","Chi-squared test","t-test","Null hypothesis","P-value","Regression line","Pearson correlation","Spearman rank","Confidence interval","Contingency table","Expected value","Conditional probability","Bayes' theorem"],
+    "Calculus":["Differentiation","Integration","Chain rule","Trapezoidal rule","Related rates","Slope field","Euler's method","Differential equation","Definite integral","Area under a curve"]
   }},
   "History":{icon:"hist",topics:{
-    "WWI":["Schlieffen Plan","Trench warfare","War reparations","Total war","Propaganda","Stalemate","War guilt clause","Armistice","Western Front","Conscription","Attrition","Home front"],
-    "WWII":["Appeasement","Blitzkrieg","D-Day","Totalitarianism","Final Solution","Lend-Lease Act","Island hopping","Atlantic Charter","Kamikazes","War crimes tribunal"],
-    "Cold War":["Marshall Plan","Truman Doctrine","NATO","Berlin Wall","Cuban Missile Crisis","McCarthyism","Détente","Proxy war","Mutual assured destruction","SALT treaties","Arms race","Containment policy","Iron Curtain","Brinksmanship","Glasnost"],
-    "Decolonisation":["Apartheid","Non-Aligned Movement","Partition of India","Bandung Conference","Suez Crisis","Neo-colonialism","Pan-Africanism","White minority rule","Civil disobedience","Nationalism"]
+    "WWI":["Schlieffen Plan","Trench warfare","War reparations","Total war","Propaganda","Stalemate","War guilt clause","Armistice","Western Front","Conscription","Attrition","Home front","Fourteen Points","Treaty of Versailles","League of Nations","July Crisis"],
+    "WWII":["Appeasement","Blitzkrieg","D-Day","Totalitarianism","Final Solution","Lend-Lease Act","Island hopping","Atlantic Charter","Kamikaze attack","War crimes tribunal","Munich Agreement","Non-aggression Pact","Operation Barbarossa","Pearl Harbor","Manhattan Project","Nuremberg Trials"],
+    "Cold War":["Marshall Plan","Truman Doctrine","NATO","Berlin Wall","Cuban Missile Crisis","McCarthyism","Détente","Proxy war","Mutual assured destruction","SALT treaties","Arms race","Containment policy","Iron Curtain","Brinksmanship","Glasnost","Warsaw Pact","Space Race","Prague Spring","Perestroika"],
+    "Decolonisation & Civil Rights":["Apartheid","Non-Aligned Movement","Partition of India","Bandung Conference","Suez Crisis","Neo-colonialism","Pan-Africanism","White minority rule","Civil disobedience","Nationalism","Sharpeville massacre","Soweto uprising","Mandate system","Self-determination"]
   }},
   "Economics":{icon:"econ",topics:{
-    "Microeconomics":["Price elasticity","Consumer surplus","Marginal utility","Price discrimination","Natural monopoly","Oligopoly","Nash equilibrium","Market failure","Negative externality","Indifference curve","Marginal cost","Allocative efficiency","Deadweight loss","Monopsony","Moral hazard"],
-    "Macroeconomics":["GDP","Inflation rate","Phillips curve","Fiscal policy","Quantitative easing","Multiplier effect","Current account","Exchange rate","Keynesian economics","Supply-side policy","LRAS curve","Output gap","Stagflation","Crowding out","Balance of payments"],
-    "International":["Comparative advantage","Terms of trade","Trade deficit","Protectionism","Import tariff","Exchange rate regime","Capital account","Trade liberalisation","Purchasing power parity","Bretton Woods"]
+    "Microeconomics":["Price elasticity","Consumer surplus","Producer surplus","Marginal utility","Price discrimination","Natural monopoly","Oligopoly","Nash equilibrium","Market failure","Negative externality","Positive externality","Indifference curve","Marginal cost","Allocative efficiency","Deadweight loss","Monopsony","Moral hazard","Income elasticity","Cross elasticity","Lorenz curve","Gini coefficient"],
+    "Macroeconomics":["GDP","Inflation rate","Phillips curve","Fiscal policy","Quantitative easing","Multiplier effect","Current account","Exchange rate","Keynesian economics","Supply-side policy","LRAS curve","Output gap","Stagflation","Crowding out","Balance of payments","Cost-push inflation","Demand-pull inflation","Recession","Aggregate demand","Aggregate supply","Monetary policy"],
+    "International & Development":["Comparative advantage","Absolute advantage","Terms of trade","Trade deficit","Protectionism","Import tariff","Floating exchange rate","Trade liberalisation","Purchasing power parity","Bretton Woods","Trade bloc","World Trade Organization","Foreign direct investment","Human Development Index"]
   }},
   "Psychology":{icon:"psych",topics:{
-    "Approaches":["Behaviourism","Social learning theory","Cognitive approach","Biological approach","Psychodynamic theory","Operant conditioning","Classical conditioning","Schema theory","Attribution theory","Cognitive dissonance","Locus of control","Self-efficacy"],
-    "Research Methods":["Randomised control trial","Longitudinal study","Case study","Demand characteristics","Ecological validity","Reliability","Replication","Double-blind study","Triangulation","Informed consent","Debrief","Confounding variable","Standardisation","Inter-rater reliability"],
-    "Topics":["Memory model","Flashbulb memory","Cognitive bias","Confirmation bias","Fundamental attribution error","Bystander effect","Obedience","Conformity","Social facilitation","Deindividuation","Groupthink","Stereotype threat"]
+    "Biological":["Neurotransmitter","Synapse","Neuroplasticity","Hormone","Pheromone","Localisation of function","Lateralisation","Neural pruning","Genetic predisposition","Twin studies","MRI","Biological approach","Endocrine system","Amygdala"],
+    "Cognitive":["Schema theory","Memory model","Flashbulb memory","Cognitive bias","Confirmation bias","Reconstructive memory","Misinformation effect","Priming","Heuristic","Availability heuristic","Dual processing","Cognitive dissonance","Thinking fast and slow"],
+    "Sociocultural":["Social identity theory","Social learning theory","Fundamental attribution error","Bystander effect","Obedience","Conformity","Social facilitation","Deindividuation","Groupthink","Stereotype threat","Minority influence","Prosocial behaviour","Attribution theory","In-group bias","Culture dimensions"],
+    "Research Methods":["Randomised control trial","Longitudinal study","Case study","Demand characteristics","Ecological validity","Reliability","Replication","Double-blind study","Triangulation","Informed consent","Confounding variable","Standardisation","Inter-rater reliability","Independent variable","Dependent variable","Naturalistic observation","Thematic analysis","Pilot study"]
   }},
   "English Lit":{icon:"eng",topics:{
-    "Literary Terms":["Metaphor","Allegory","Dramatic irony","Foreshadowing","Denouement","Soliloquy","Pathetic fallacy","Bildungsroman","Epistolary novel","Unreliable narrator","Hamartia","Anagnorisis","Catharsis","In medias res","Ekphrasis"],
-    "Movements":["Modernism","Postmodernism","Romanticism","Naturalism","Magical realism","Stream of consciousness","Gothic literature","Victorian realism","Existentialism","Surrealism","Absurdism","Symbolism","Decadence"],
-    "Narrative":["Omniscient narrator","Free indirect discourse","Frame narrative","Prolepsis","Analepsis","Diegetic","Metafiction","Polyphony","Defamiliarisation","Close reading"]
+    "Literary Devices":["Metaphor","Simile","Allegory","Dramatic irony","Foreshadowing","Soliloquy","Pathetic fallacy","Oxymoron","Synecdoche","Metonymy","Motif","Tone","Diction","Imagery","Allusion","Paradox","Juxtaposition","Anaphora","Personification","Hyperbole","Onomatopoeia"],
+    "Form & Structure":["Bildungsroman","Epistolary novel","Denouement","Hamartia","Anagnorisis","Catharsis","In medias res","Ekphrasis","Iambic pentameter","Enjambment","Caesura","Tragic hero","Deus ex machina","Sonnet","Blank verse","Free verse"],
+    "Movements":["Modernism","Postmodernism","Romanticism","Naturalism","Magical realism","Stream of consciousness","Gothic literature","Victorian realism","Existentialism","Surrealism","Absurdism","Symbolism","Harlem Renaissance","Beat Generation"],
+    "Narrative":["Omniscient narrator","Unreliable narrator","Free indirect discourse","Frame narrative","Prolepsis","Analepsis","Diegetic","Metafiction","Polyphony","Defamiliarisation","Close reading","Interior monologue","Second-person narration"]
   }}
 };
 
 // ══ CUSTOM SVG ICONS ══
 const ICONS = {
-  bio:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  bio:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <ellipse cx="24" cy="24" rx="14" ry="10" transform="rotate(-30 24 24)"/>
     <ellipse cx="24" cy="24" rx="14" ry="10" transform="rotate(30 24 24)"/>
-    <circle cx="24" cy="24" r="4" fill="#0A0A0A"/>
-    <circle cx="24" cy="24" r="2" fill="white"/>
-    <line x1="24" y1="10" x2="24" y2="14" stroke-width="2"/>
-    <line x1="24" y1="34" x2="24" y2="38" stroke-width="2"/>
+    <circle cx="24" cy="24" r="5" fill="var(--yellow)" stroke="var(--ink)" stroke-width="2"/>
+    <line x1="24" y1="8" x2="24" y2="12" stroke-width="2"/>
+    <line x1="24" y1="36" x2="24" y2="40" stroke-width="2"/>
   </svg>`,
-  chem:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  chem:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 42 L38 42 Q42 42 40 38 L32 26 L16 26 L8 38 Q6 42 10 42 Z" fill="var(--yellow)" stroke="none"/>
     <path d="M18 6 L18 22 L8 38 Q6 42 10 42 L38 42 Q42 42 40 38 L30 22 L30 6 Z"/>
     <line x1="18" y1="6" x2="30" y2="6"/>
-    <circle cx="18" cy="32" r="2.5" fill="#0A0A0A"/>
-    <circle cx="28" cy="36" r="2" fill="#0A0A0A"/>
-    <circle cx="22" cy="38" r="1.5" fill="#0A0A0A"/>
+    <circle cx="28" cy="36" r="2.5" fill="var(--red)" stroke="var(--ink)" stroke-width="1.5"/>
+    <circle cx="18" cy="32" r="1.8" fill="var(--ink)"/>
+    <circle cx="22" cy="38" r="1.3" fill="var(--ink)"/>
   </svg>`,
-  phys:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <polygon points="26,4 18,26 23,26 18,44 32,20 26,20 32,4" fill="#F5C800" stroke="#0A0A0A" stroke-width="2.5"/>
+  phys:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="39" cy="10" r="2.5" fill="var(--red)" stroke="none"/>
+    <circle cx="9" cy="39" r="2" fill="var(--red)" stroke="none"/>
+    <polygon points="26,4 18,26 23,26 18,44 32,20 26,20 32,4" fill="var(--yellow)" stroke="var(--ink)" stroke-width="2.5"/>
   </svg>`,
-  math:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M38 8 L22 8 L10 24 L22 40 L38 40"/>
-    <line x1="28" y1="18" x2="38" y2="18"/>
-    <line x1="28" y1="24" x2="40" y2="24"/>
-    <line x1="28" y1="30" x2="38" y2="30"/>
-    <line x1="10" y1="24" x2="14" y2="24" stroke-width="3"/>
+  math:`<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="11" width="42" height="26" fill="var(--yellow)" stroke="var(--ink)" stroke-width="2.5"/>
+    <text x="24" y="30" text-anchor="middle" font-family="'Bangers',Impact,sans-serif" font-size="17" fill="var(--ink)" letter-spacing="1">2+2=<tspan fill="var(--red)">5</tspan></text>
   </svg>`,
-  hist:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="10" y="8" width="28" height="4"/>
-    <rect x="10" y="36" width="28" height="4"/>
+  hist:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8" y="8" width="32" height="4" fill="var(--yellow)"/>
+    <rect x="8" y="36" width="32" height="4" fill="var(--ink)"/>
     <line x1="15" y1="12" x2="15" y2="36"/>
     <line x1="24" y1="12" x2="24" y2="36"/>
     <line x1="33" y1="12" x2="33" y2="36"/>
@@ -754,38 +930,40 @@ const ICONS = {
     <line x1="22" y1="14" x2="22" y2="34" stroke-width="1" opacity="0.4"/>
     <line x1="31" y1="14" x2="31" y2="34" stroke-width="1" opacity="0.4"/>
   </svg>`,
-  econ:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="6,38 14,28 22,32 34,14 42,18"/>
-    <polyline points="36,8 42,8 42,14"/>
-    <rect x="6" y="38" width="6" height="4"/>
-    <rect x="16" y="32" width="6" height="10"/>
-    <rect x="26" y="22" width="6" height="20"/>
+  econ:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6" y="36" width="7" height="6" fill="var(--yellow)"/>
+    <rect x="17" y="28" width="7" height="14" fill="var(--yellow)"/>
+    <rect x="28" y="18" width="7" height="24" fill="var(--yellow)"/>
+    <polyline points="6,36 14,26 22,30 34,12 42,16" stroke="var(--red)" stroke-width="3"/>
+    <polyline points="36,6 42,6 42,12" stroke="var(--red)" stroke-width="3"/>
   </svg>`,
-  psych:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M24 8 C14 8 8 15 8 22 C8 30 14 34 20 36 L20 40 L28 40 L28 36 C34 34 40 30 40 22 C40 15 34 8 24 8Z"/>
-    <line x1="19" y1="20" x2="19" y2="28"/>
-    <line x1="24" y1="17" x2="24" y2="28"/>
-    <line x1="29" y1="20" x2="29" y2="28"/>
-    <line x1="16" y1="24" x2="32" y2="24"/>
+  psych:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 8 C14 8 8 15 8 22 C8 30 14 34 20 36 L20 40 L28 40 L28 36 C34 34 40 30 40 22 C40 15 34 8 24 8Z" fill="var(--yellow)"/>
+    <line x1="19" y1="20" x2="19" y2="28" stroke="var(--ink)"/>
+    <line x1="24" y1="16" x2="24" y2="30" stroke="var(--red)" stroke-width="2.5"/>
+    <line x1="29" y1="20" x2="29" y2="28" stroke="var(--ink)"/>
+    <line x1="16" y1="24" x2="32" y2="24" stroke="var(--ink)"/>
   </svg>`,
-  eng:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M10 8 L10 40 L24 34 L38 40 L38 8 L24 14 Z"/>
+  eng:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 8 L10 40 L24 34 L38 40 L38 8 L24 14 Z" fill="var(--yellow)"/>
+    <rect x="30" y="8" width="4" height="12" fill="var(--red)" stroke="none"/>
     <line x1="24" y1="14" x2="24" y2="34"/>
-    <line x1="16" y1="18" x2="22" y2="16" stroke-width="1.5"/>
-    <line x1="16" y1="24" x2="22" y2="22" stroke-width="1.5"/>
-    <line x1="16" y1="30" x2="22" y2="28" stroke-width="1.5"/>
-    <line x1="32" y1="18" x2="26" y2="16" stroke-width="1.5"/>
-    <line x1="32" y1="24" x2="26" y2="22" stroke-width="1.5"/>
+    <line x1="16" y1="20" x2="22" y2="18" stroke-width="1.5"/>
+    <line x1="16" y1="26" x2="22" y2="24" stroke-width="1.5"/>
+    <line x1="32" y1="26" x2="26" y2="24" stroke-width="1.5"/>
   </svg>`
 };
 
 // ══ APP STATE ══
 const S = {
   subject: 'Biology', topics: [], duration: 60,
+  level: 'hl',
   deck: [], idx: 0, score: {correct:[], passed:[]},
   timeLeft: 60, timerID: null, tiltEnabled: false,
   customTerms: [], tiltCooldown: 0,
-  summaryTab: 'passed'
+  summaryTab: 'passed',
+  calib: { samples: [], restBeta: 90, thCorrect: 130, thPass: 50, listener: null },
+  pin: { mode: 'enter', input: '', first: null }
 };
 
 // ══ AUDIO (Web Audio API) ══
@@ -825,6 +1003,37 @@ function playTick(){
     g.gain.setValueAtTime(0.07,c.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.06);
     o.start();o.stop(c.currentTime+0.08);
+  }catch(e){}
+}
+function playClockTick(high){
+  try{
+    const c=getACtx();
+    const noise=c.createBufferSource();
+    const buf=c.createBuffer(1,c.sampleRate*0.04,c.sampleRate);
+    const data=buf.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,2);
+    noise.buffer=buf;
+    const bp=c.createBiquadFilter();
+    bp.type='bandpass'; bp.frequency.value=high?2400:1500; bp.Q.value=6;
+    const g=c.createGain();
+    g.gain.setValueAtTime(0.32,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.05);
+    noise.connect(bp); bp.connect(g); g.connect(c.destination);
+    noise.start();
+  }catch(e){}
+}
+function playGoChime(){
+  try{
+    const c=getACtx();
+    [[523,0],[784,0.08],[1047,0.16]].forEach(([f,t])=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.connect(g);g.connect(c.destination);
+      o.frequency.value=f;o.type='triangle';
+      const at=c.currentTime+t;
+      g.gain.setValueAtTime(0.22,at);
+      g.gain.exponentialRampToValueAtTime(0.001,at+0.35);
+      o.start(at);o.stop(at+0.4);
+    });
   }catch(e){}
 }
 
@@ -871,7 +1080,15 @@ function goToSetup(){
     };
     chips.appendChild(chip);
   });
+  const hasHL = Array.isArray(data.hl) && data.hl.length>0;
+  document.getElementById('setup-level').style.display = hasHL ? '' : 'none';
+  document.querySelectorAll('.sl-hl-opt').forEach(b=>b.classList.toggle('active', b.dataset.level===S.level));
   showScreen('screen-setup');
+}
+
+function setLevel(level){
+  S.level = (level==='sl') ? 'sl' : 'hl';
+  document.querySelectorAll('.sl-hl-opt').forEach(b=>b.classList.toggle('active', b.dataset.level===S.level));
 }
 
 function selectTimer(sec,el){
@@ -881,17 +1098,82 @@ function selectTimer(sec,el){
 }
 
 // ══ TEACHER MODE ══
+function setTeacherHint(msg,tone){
+  const el=document.getElementById('teacher-hint');
+  el.textContent=msg||'';
+  el.className='teacher-hint'+(tone?' '+tone:'');
+}
+
 function addCustomTerms(){
   const inp=document.getElementById('teacher-input');
-  inp.value.split('\n').map(l=>l.trim()).filter(Boolean).forEach(t=>{
-    if(!S.customTerms.find(x=>x.term===t)) S.customTerms.push({term:t,category:'Custom',subject:'Custom'});
-  });
+  const rows=inp.value.split('\n').map(l=>l.trim()).filter(Boolean);
+  const added=ingestRows(rows.map(t=>[t]));
   inp.value=''; renderCustom();
+  setTeacherHint(added?`Added ${added} term${added===1?'':'s'}.`:'Nothing new to add.', added?'ok':'err');
+}
+
+function ingestRows(rows){
+  let added=0;
+  for(const row of rows){
+    const term=(row[0]||'').trim();
+    if(!term) continue;
+    const category=((row[1]||'').trim())||'Custom';
+    if(!S.customTerms.find(x=>x.term.toLowerCase()===term.toLowerCase())){
+      S.customTerms.push({term,category,subject:'Custom'});
+      added++;
+    }
+  }
+  return added;
+}
+
+function parseCSV(text){
+  text=text.replace(/^﻿/,'').replace(/\r\n?/g,'\n');
+  const rows=[]; let cur=[], field='', inQuote=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQuote){
+      if(c==='"'){
+        if(text[i+1]==='"'){ field+='"'; i++; }
+        else inQuote=false;
+      } else field+=c;
+    } else {
+      if(c==='"') inQuote=true;
+      else if(c===','){ cur.push(field); field=''; }
+      else if(c==='\n'){ cur.push(field); rows.push(cur); cur=[]; field=''; }
+      else field+=c;
+    }
+  }
+  if(field.length||cur.length){ cur.push(field); rows.push(cur); }
+  return rows
+    .map(r=>r.map(x=>x.trim()))
+    .filter(r=>r.some(x=>x.length));
+}
+
+function onCsvFile(ev){
+  const file=ev.target.files&&ev.target.files[0];
+  ev.target.value='';
+  if(!file) return;
+  if(file.size>512*1024){ setTeacherHint('File too large. Keep under 500 KB.','err'); return; }
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      let rows=parseCSV(String(reader.result||''));
+      if(rows.length && /^term$/i.test(rows[0][0]||'')) rows=rows.slice(1);
+      const added=ingestRows(rows);
+      renderCustom();
+      if(!added) setTeacherHint('No new terms found in that file.','err');
+      else setTeacherHint(`Imported ${added} term${added===1?'':'s'} from ${file.name}.`,'ok');
+    }catch(e){
+      setTeacherHint('Could not read that file.','err');
+    }
+  };
+  reader.onerror=()=>setTeacherHint('Could not read that file.','err');
+  reader.readAsText(file);
 }
 function renderCustom(){
   const list=document.getElementById('custom-items');
   document.getElementById('custom-label').textContent=`CUSTOM DECK (${S.customTerms.length})`;
-  if(!S.customTerms.length){ list.innerHTML='<div class="empty-msg">No terms added yet — paste your list on the left.</div>'; return; }
+  if(!S.customTerms.length){ list.innerHTML='<div class="empty-msg">No terms added yet. Paste your list on the left.</div>'; return; }
   list.innerHTML='';
   S.customTerms.forEach((t,i)=>{
     const el=document.createElement('div');
@@ -927,8 +1209,16 @@ function drawSpeedLines(){
 
 // ══ GAME ══
 function buildDeck(){
-  const data=IB[S.subject]; let terms=[];
-  S.topics.forEach(t=>{ data.topics[t].forEach(term=>terms.push({term,category:t,subject:S.subject})); });
+  const data=IB[S.subject];
+  const hlSet=new Set((data.hl||[]).map(t=>t.toLowerCase()));
+  const skipHL = S.level==='sl' && hlSet.size>0;
+  let terms=[];
+  S.topics.forEach(t=>{
+    (data.topics[t]||[]).forEach(term=>{
+      if(skipHL && hlSet.has(term.toLowerCase())) return;
+      terms.push({term,category:t,subject:S.subject});
+    });
+  });
   return shuffle(terms);
 }
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
@@ -949,31 +1239,72 @@ function startWithoutTilt(){ S.tiltEnabled=false; beginCountdown(); }
 function beginCountdown(){
   showScreen('screen-countdown');
   document.getElementById('cdown-mode').textContent=S.tiltEnabled?'TILT CONTROLS ACTIVE':'USING ON-SCREEN ZONES';
+  S.calib.samples=[];
+  if(S.tiltEnabled){
+    S.calib.listener=(e)=>{ if(typeof e.beta==='number') S.calib.samples.push(e.beta); };
+    window.addEventListener('deviceorientation',S.calib.listener);
+  }
   let n=3;
   const el=document.getElementById('cdown-num');
   el.textContent=n;
+  playClockTick(true);
   const iv=setInterval(()=>{
     n--;
-    if(n===0){ clearInterval(iv); el.textContent='GO!'; setTimeout(launchGame,700); }
-    else{ el.style.animation='none'; el.offsetHeight; el.style.animation='cpop 0.7s ease'; el.textContent=n; }
+    if(n===0){
+      clearInterval(iv);
+      el.textContent='GO!';
+      playGoChime();
+      setTimeout(launchGame,700);
+    } else {
+      el.style.animation='none'; el.offsetHeight; el.style.animation='cpop 0.7s ease';
+      el.textContent=n;
+      playClockTick(n%2===1);
+    }
   },1000);
+}
+
+function finalizeCalibration(){
+  if(S.calib.listener){
+    window.removeEventListener('deviceorientation',S.calib.listener);
+    S.calib.listener=null;
+  }
+  const samples=S.calib.samples;
+  if(samples.length>=6){
+    const sorted=[...samples].sort((a,b)=>a-b);
+    const mid=sorted.slice(Math.floor(sorted.length*0.2), Math.ceil(sorted.length*0.8));
+    const rest=mid.reduce((a,b)=>a+b,0)/mid.length;
+    S.calib.restBeta=rest;
+    S.calib.thCorrect=rest+40;
+    S.calib.thPass=rest-40;
+  } else {
+    S.calib.restBeta=90; S.calib.thCorrect=130; S.calib.thPass=50;
+  }
 }
 
 function launchGame(){
   S.idx=0; S.score={correct:[],passed:[]}; S.timeLeft=S.duration;
+  finalizeCalibration();
   drawSpeedLines();
   showScreen('screen-game');
-  renderCard();
+  renderCard(true);
   startTimer();
   if(S.tiltEnabled) window.addEventListener('deviceorientation',onTilt);
 }
 
-function renderCard(){
+function renderCard(skipFlip){
   if(S.idx>=S.deck.length){ endGame(); return; }
-  const c=S.deck[S.idx];
-  document.getElementById('term-word').textContent=c.term;
-  document.getElementById('term-cat').textContent=c.category.toUpperCase();
-  document.getElementById('term-num').textContent=`${S.idx+1} / ${S.deck.length}`;
+  const card=document.getElementById('term-card');
+  const apply=()=>{
+    const c=S.deck[S.idx];
+    document.getElementById('term-word').textContent=c.term;
+    document.getElementById('term-cat').textContent=c.category.toUpperCase();
+    document.getElementById('term-num').textContent=`${S.idx+1} / ${S.deck.length}`;
+  };
+  if(skipFlip){ apply(); return; }
+  card.classList.remove('card-flip'); void card.offsetWidth;
+  card.classList.add('card-flip');
+  setTimeout(apply,150);
+  setTimeout(()=>card.classList.remove('card-flip'),330);
 }
 
 const FX_C=['NICE!','YES!!','NAILED','BOOM!','ACE!!'];
@@ -1012,9 +1343,9 @@ function registerPass(){
 
 function onTilt(e){
   const beta=e.beta, now=Date.now();
-  if(now-S.tiltCooldown<1400||beta===null) return;
-  if(beta>118){ S.tiltCooldown=now; registerCorrect(); }
-  else if(beta<18){ S.tiltCooldown=now; registerPass(); }
+  if(now-S.tiltCooldown<1400||typeof beta!=='number') return;
+  if(beta>S.calib.thCorrect){ S.tiltCooldown=now; registerCorrect(); }
+  else if(beta<S.calib.thPass){ S.tiltCooldown=now; registerPass(); }
 }
 
 function startTimer(){
@@ -1081,21 +1412,15 @@ function renderSummaryTab(){
 async function fetchDefs(){
   const allItems=[...S.score.passed,...S.score.correct.slice(0,4)];
   if(!allItems.length) return;
-  const termList=allItems.map(i=>`${i.term} (${i.subject})`).join(', ');
+  const terms=allItems.map(i=>({term:i.term,subject:i.subject}));
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/define',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1500,
-        messages:[{role:'user',content:`You are an IB examiner. For each term, write one crisp sentence definition (max 25 words) suitable for a 17-year-old IB student. Be precise and exam-relevant. Return ONLY a JSON array, no markdown, no backticks. Format: [{"term":"...","definition":"..."}]. Terms: ${termList}`}]
-      })
+      body:JSON.stringify({terms})
     });
-    const data=await res.json();
-    const raw=data.content.map(b=>b.text||'').join('');
-    const clean=raw.replace(/```json|```/g,'').trim();
-    const defs=JSON.parse(clean);
+    if(!res.ok) throw new Error('proxy '+res.status);
+    const {defs}=await res.json();
     defs.forEach(d=>{
       document.querySelectorAll('.sum-card').forEach(card=>{
         const termEl=card.querySelector('.sum-term');
@@ -1119,9 +1444,87 @@ function playAgain(){
   initHome();
 }
 
+// ══ THEME ══
+const THEME_KEY='hs.theme';
+const META_THEME={ ink:'#0A0A0A', pastel:'#FBEEE1' };
+function setTheme(name){
+  if(name!=='pastel') name='ink';
+  document.body.classList.toggle('theme-pastel', name==='pastel');
+  document.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('active', b.dataset.theme===name));
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', META_THEME[name]);
+  localStorage.setItem(THEME_KEY, name);
+}
+
+// ══ TEACHER PIN ══
+const PIN_KEY='hs.teacherPin';
+function openTeacher(){
+  const saved=localStorage.getItem(PIN_KEY);
+  S.pin.mode = saved ? 'enter' : 'create';
+  S.pin.input=''; S.pin.first=null;
+  setPinTitle(S.pin.mode==='enter'?'ENTER TEACHER PIN':'CREATE TEACHER PIN');
+  setPinHint('');
+  updatePinDisplay();
+  showScreen('screen-pin');
+}
+function setPinTitle(t){ document.getElementById('pin-title').textContent=t; }
+function setPinHint(t){ document.getElementById('pin-hint').textContent=t; }
+function updatePinDisplay(){
+  const len=S.pin.input.length;
+  document.getElementById('pin-display').textContent='●●●●'.split('').map((_,i)=>i<len?S.pin.input[i]:'●').join('');
+}
+function pinTap(d){
+  if(S.pin.input.length>=4) return;
+  S.pin.input+=String(d);
+  updatePinDisplay();
+  if(S.pin.input.length===4) setTimeout(pinSubmit,160);
+}
+function pinClear(){ S.pin.input=''; updatePinDisplay(); setPinHint(''); }
+function pinBackspace(){ S.pin.input=S.pin.input.slice(0,-1); updatePinDisplay(); setPinHint(''); }
+function pinShake(){
+  const d=document.getElementById('pin-display');
+  d.classList.remove('shake'); void d.offsetWidth; d.classList.add('shake');
+}
+function pinSubmit(){
+  const saved=localStorage.getItem(PIN_KEY);
+  if(S.pin.mode==='enter'){
+    if(S.pin.input===saved){ setPinHint(''); showScreen('screen-teacher'); }
+    else { setPinHint('Wrong PIN. Try again.'); pinShake(); S.pin.input=''; updatePinDisplay(); }
+    return;
+  }
+  if(!S.pin.first){
+    S.pin.first=S.pin.input; S.pin.input='';
+    setPinTitle('CONFIRM PIN'); setPinHint('Type the same PIN again.');
+    updatePinDisplay();
+  } else {
+    if(S.pin.input===S.pin.first){
+      localStorage.setItem(PIN_KEY,S.pin.input);
+      setPinHint(''); showScreen('screen-teacher');
+    } else {
+      setPinHint('PINs did not match. Start over.');
+      pinShake();
+      S.pin.first=null; S.pin.input='';
+      setPinTitle('CREATE TEACHER PIN');
+      updatePinDisplay();
+    }
+  }
+}
+function resetTeacherPin(){
+  if(!confirm('Reset teacher PIN? You will set a new one.')) return;
+  localStorage.removeItem(PIN_KEY);
+  openTeacher();
+}
+
 // ══ INIT ══
+setTheme(localStorage.getItem(THEME_KEY)||'ink');
 initHome();
 renderCustom();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>

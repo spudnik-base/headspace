@@ -1,0 +1,16 @@
+{
+  "name": "headspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HeadSpace — IB Manga Edition. Landscape heads-up-style study game.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "icons": "node scripts/generate-icons.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}
