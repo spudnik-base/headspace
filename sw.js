@@ -1,12 +1,12 @@
-const VERSION = 'headspace-v1';
+const VERSION = 'headspace-v2';
 const CORE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/apple-touch-icon.png',
-  '/icons/favicon-32.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png',
+  './icons/favicon-32.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -30,7 +30,7 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
 
-  if (url.pathname.startsWith('/api/')) {
+  if (url.pathname.includes('/api/')) {
     return;
   }
 
@@ -40,7 +40,7 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match('/index.html'))
+      fetch(request).catch(() => caches.match('./index.html'))
     );
     return;
   }
@@ -54,7 +54,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(VERSION).then((c) => c.put(request, copy));
         }
         return response;
-      }).catch(() => caches.match('/index.html'));
+      }).catch(() => caches.match('./index.html'));
     })
   );
 });
