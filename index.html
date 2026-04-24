@@ -267,6 +267,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 .game-countdown.warn { color: var(--warn); }
 .game-countdown.danger { color: var(--red); animation: cdanger 0.5s ease-in-out infinite alternate; }
 @keyframes cdanger { from{ opacity:1 } to{ opacity:0.4 } }
+.game-exit-btn {
+  background: none; border: none; border-left: var(--b3);
+  height: 100%; width: 46px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--white); padding: 0; transition: background 0.1s;
+}
+.game-exit-btn:hover { background: rgba(255,255,255,0.12); }
+.game-exit-btn:active { background: rgba(255,255,255,0.22); }
+.game-exit-btn svg { width: 18px; height: 18px; }
 
 .game-body { flex: 1; display: flex; overflow: hidden; }
 
@@ -409,6 +418,25 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 .sum-tab:hover:not(.active) { background:var(--paper); }
 
 .summary-list { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:8px; }
+.defs-status {
+  display:none; align-items:center; justify-content:space-between; gap:10px;
+  padding:8px 16px; font-size:11px; font-weight:700; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--ink); background:var(--paper2);
+  border-bottom:var(--b2);
+}
+.defs-status.show { display:flex; }
+.defs-status.err { background:rgba(200,0,26,0.12); color:var(--red); }
+.defs-status .spinner {
+  width:10px; height:10px; border:2px solid var(--ink); border-top-color:transparent;
+  border-radius:50%; animation:spin 0.9s linear infinite; flex-shrink:0;
+}
+@keyframes spin { to{ transform:rotate(360deg); } }
+.defs-retry {
+  background:var(--ink); color:var(--yellow); border:none;
+  font-family:var(--font-bang); font-size:11px; letter-spacing:1.5px;
+  padding:4px 10px; cursor:pointer;
+}
+.defs-retry:hover { filter:brightness(1.3); }
 .sum-card {
   background:var(--panel); border: var(--b2); padding:12px 16px;
   border-left:4px solid var(--ink); transition:border-color 0.2s;
@@ -566,6 +594,76 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 ::-webkit-scrollbar-track{ background:transparent; }
 ::-webkit-scrollbar-thumb{ background:rgba(0,0,0,0.25); }
 
+/* ── SMALL LANDSCAPE (phones, e.g. Pixel 8 ≈ 915×412) ── */
+@media (orientation: landscape) and (max-height: 480px) {
+  /* HOME */
+  .home-left { width: 180px; min-width: 180px; padding: 14px 14px 12px; }
+  .home-logo { font-size: 32px; letter-spacing: 3px; margin-bottom: 2px; }
+  .home-edition { padding: 2px 6px; font-size: 9px; letter-spacing: 1.5px; margin-bottom: 10px; }
+  .home-speech { padding: 8px 10px; border-radius: 10px; }
+  .speech-title { font-size: 13px; margin-bottom: 2px; }
+  .speech-body { font-size: 10px; line-height: 1.35; }
+  .home-teacher-btn { padding: 6px 10px; font-size: 11px; margin-top: 8px; }
+  .home-right { padding: 10px 12px; }
+  .home-right-header { font-size: 10px; letter-spacing: 2px; margin-bottom: 6px; }
+  .subject-grid { gap: 4px; }
+  .subject-card { padding: 4px 4px; gap: 2px; }
+  .subj-icon { width: 26px; height: 26px; }
+  .subj-name { font-size: 11px; letter-spacing: 0.5px; }
+  .subj-count { font-size: 8px; }
+  .btn-manga { font-size: 16px; letter-spacing: 2px; padding: 8px 18px; }
+  .home-start-row { margin-top: 6px; }
+
+  /* SETUP */
+  .setup-left { width: 50%; padding: 12px 14px; }
+  .setup-right { padding: 12px 14px; }
+  .setup-back-btn { padding: 5px 10px; font-size: 13px; margin-bottom: 8px; }
+  .setup-subj-icon { width: 30px; height: 30px; }
+  .setup-subj-name { font-size: 22px; letter-spacing: 2px; }
+  .setup-subject-badge { gap: 8px; margin-bottom: 8px; }
+  .setup-section { font-size: 10px; margin-bottom: 6px; }
+  .topic-chip { padding: 4px 9px; font-size: 11px; }
+  .timer-opt { padding: 8px 6px; }
+  .timer-val { font-size: 24px; }
+  .timer-unit { font-size: 9px; }
+
+  /* GAME */
+  .game-topbar { height: 38px; }
+  .game-score-box { padding: 0 10px; font-size: 16px; }
+  .game-countdown { font-size: 20px; padding: 0 10px; min-width: 52px; }
+  .game-exit-btn { width: 38px; }
+  .game-exit-btn svg { width: 14px; height: 14px; }
+  .game-zone { width: 110px; }
+  .zone-arrow { font-size: 44px; }
+  .zone-label-main { font-size: 16px; letter-spacing: 1.5px; }
+  .zone-label-top, .zone-label-sub { font-size: 9px; }
+  .term-card-manga { padding: 16px 18px; box-shadow: 4px 4px 0 var(--ink); }
+  .term-card-wrap { max-width: 420px; padding: 0 12px; }
+  .term-cat-pill { margin-bottom: 8px; padding: 2px 8px; }
+  .term-word-big { font-size: clamp(22px, 4.5vw, 48px); letter-spacing: 2px; }
+  .fx-word { font-size: 60px; letter-spacing: 4px; -webkit-text-stroke: 3px var(--ink); }
+
+  /* COUNTDOWN */
+  .cdown-ring { width: 130px; height: 130px; border-width: 4px; }
+  .cdown-num { font-size: 72px; }
+  .cdown-hint { font-size: 14px; letter-spacing: 2px; max-width: 260px; }
+  .cdown-mode { font-size: 11px; }
+  #screen-countdown { gap: 8px; }
+
+  /* SUMMARY */
+  .summary-left { width: 200px; padding: 14px 14px; }
+  .summary-rank { font-size: 52px; letter-spacing: 3px; }
+  .summary-rank-sub { font-size: 11px; margin-bottom: 10px; }
+  .stat-cell { padding: 6px 4px; }
+  .stat-val { font-size: 22px; }
+  .stat-lbl { font-size: 8px; }
+  .sum-tab { padding: 8px; font-size: 12px; }
+  .summary-list { padding: 10px; gap: 6px; }
+  .sum-card { padding: 8px 12px; }
+  .sum-term { font-size: 15px; }
+  .sum-def { font-size: 12px; line-height: 1.4; }
+}
+
 /* ── DESKTOP CENTERING ── */
 @media (min-width:1200px){
   #app-wrap{ max-width:1000px; max-height:600px; margin:auto; position:absolute; inset:0; }
@@ -692,6 +790,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
       </div>
       <div class="game-countdown" id="hud-timer">60</div>
     </div>
+    <button class="game-exit-btn" onclick="exitGame()" aria-label="Exit game" title="Exit game">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
   <!-- BODY -->
   <div class="game-body">
@@ -816,6 +917,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <div class="summary-tabs">
       <button class="sum-tab active" onclick="switchTab('passed',this)">STUDY LIST</button>
       <button class="sum-tab" onclick="switchTab('correct',this)">NAILED IT</button>
+    </div>
+    <div class="defs-status" id="defs-status">
+      <span id="defs-status-text"><span class="spinner"></span> Loading definitions…</span>
+      <button class="defs-retry" id="defs-retry" onclick="fetchDefs()" style="display:none;">RETRY</button>
     </div>
     <div class="summary-list" id="summary-list"></div>
   </div>
@@ -962,7 +1067,7 @@ const S = {
   timeLeft: 60, timerID: null, tiltEnabled: false,
   customTerms: [], tiltCooldown: 0,
   summaryTab: 'passed',
-  calib: { samples: [], restBeta: 90, thCorrect: 130, thPass: 50, listener: null },
+  calib: { samples: [], rest: 0, thCorrect: 40, thPass: -40, listener: null, axis: 'beta', axisSign: 1 },
   pin: { mode: 'enter', input: '', first: null }
 };
 
@@ -1236,12 +1341,25 @@ function requestPermission(){
 }
 function startWithoutTilt(){ S.tiltEnabled=false; beginCountdown(); }
 
+function detectTiltAxis(){
+  const raw = (screen.orientation && typeof screen.orientation.angle === 'number')
+    ? screen.orientation.angle
+    : (typeof window.orientation === 'number' ? window.orientation : 0);
+  const a = ((raw % 360) + 360) % 360;
+  if(a === 90)  return {axis:'gamma', sign:-1};
+  if(a === 270) return {axis:'gamma', sign: 1};
+  return {axis:'beta', sign: 1};
+}
+
 function beginCountdown(){
   showScreen('screen-countdown');
   document.getElementById('cdown-mode').textContent=S.tiltEnabled?'TILT CONTROLS ACTIVE':'USING ON-SCREEN ZONES';
   S.calib.samples=[];
+  const {axis, sign} = detectTiltAxis();
+  S.calib.axis = axis;
+  S.calib.axisSign = sign;
   if(S.tiltEnabled){
-    S.calib.listener=(e)=>{ if(typeof e.beta==='number') S.calib.samples.push(e.beta); };
+    S.calib.listener=(e)=>{ const v=e[axis]; if(typeof v==='number') S.calib.samples.push(v*sign); };
     window.addEventListener('deviceorientation',S.calib.listener);
   }
   let n=3;
@@ -1273,11 +1391,11 @@ function finalizeCalibration(){
     const sorted=[...samples].sort((a,b)=>a-b);
     const mid=sorted.slice(Math.floor(sorted.length*0.2), Math.ceil(sorted.length*0.8));
     const rest=mid.reduce((a,b)=>a+b,0)/mid.length;
-    S.calib.restBeta=rest;
+    S.calib.rest=rest;
     S.calib.thCorrect=rest+40;
     S.calib.thPass=rest-40;
   } else {
-    S.calib.restBeta=90; S.calib.thCorrect=130; S.calib.thPass=50;
+    S.calib.rest=0; S.calib.thCorrect=40; S.calib.thPass=-40;
   }
 }
 
@@ -1342,10 +1460,11 @@ function registerPass(){
 }
 
 function onTilt(e){
-  const beta=e.beta, now=Date.now();
-  if(now-S.tiltCooldown<1400||typeof beta!=='number') return;
-  if(beta>S.calib.thCorrect){ S.tiltCooldown=now; registerCorrect(); }
-  else if(beta<S.calib.thPass){ S.tiltCooldown=now; registerPass(); }
+  const raw=e[S.calib.axis], now=Date.now();
+  if(now-S.tiltCooldown<1400||typeof raw!=='number') return;
+  const v=raw*S.calib.axisSign;
+  if(v>S.calib.thCorrect){ S.tiltCooldown=now; registerCorrect(); }
+  else if(v<S.calib.thPass){ S.tiltCooldown=now; registerPass(); }
 }
 
 function startTimer(){
@@ -1369,6 +1488,12 @@ function updateTimerUI(){
 }
 
 // ══ END & SUMMARY ══
+function exitGame(){
+  if(!confirm('Exit this round? Your progress so far will be shown.')) return;
+  S.timeLeft=0;
+  endGame();
+}
+
 function endGame(){
   clearInterval(S.timerID);
   window.removeEventListener('deviceorientation',onTilt);
@@ -1409,37 +1534,87 @@ function renderSummaryTab(){
   });
 }
 
+function setDefsStatus(mode,msg){
+  const bar=document.getElementById('defs-status');
+  const text=document.getElementById('defs-status-text');
+  const retry=document.getElementById('defs-retry');
+  if(mode==='hide'){ bar.classList.remove('show','err'); return; }
+  bar.classList.add('show');
+  bar.classList.toggle('err', mode==='err');
+  if(mode==='loading'){
+    text.innerHTML='<span class="spinner"></span> '+msg;
+    retry.style.display='none';
+  } else if(mode==='err'){
+    text.textContent=msg;
+    retry.style.display='inline-block';
+  } else {
+    text.textContent=msg;
+    retry.style.display='none';
+  }
+}
+
+function applyDefs(defs){
+  defs.forEach(d=>{
+    document.querySelectorAll('.sum-card').forEach(card=>{
+      const termEl=card.querySelector('.sum-term');
+      if(termEl&&termEl.textContent===d.term){
+        card.querySelectorAll('.sum-def').forEach(el=>el.remove());
+        const def=document.createElement('div');
+        def.className='sum-def'; def.textContent=d.definition;
+        card.appendChild(def);
+      }
+    });
+  });
+}
+
 async function fetchDefs(){
   const allItems=[...S.score.passed,...S.score.correct.slice(0,4)];
-  if(!allItems.length) return;
+  if(!allItems.length){ setDefsStatus('hide'); return; }
   const terms=allItems.map(i=>({term:i.term,subject:i.subject}));
+
+  // restore loading shimmer on any cards that lost it (retry path)
+  document.querySelectorAll('.sum-card').forEach(card=>{
+    if(!card.querySelector('.sum-def')) return;
+    const hasReal=[...card.querySelectorAll('.sum-def')].some(el=>!el.classList.contains('loading')&&!el.classList.contains('loading2'));
+    if(hasReal) return;
+    card.querySelectorAll('.sum-def').forEach(el=>el.remove());
+    card.insertAdjacentHTML('beforeend','<div class="sum-def loading"></div><div class="sum-def loading2"></div>');
+  });
+
+  setDefsStatus('loading','Loading definitions…');
+
+  const ctrl=new AbortController();
+  const timeoutID=setTimeout(()=>ctrl.abort('timeout'),12000);
+
   try{
     const res=await fetch('api/define',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({terms})
+      body:JSON.stringify({terms}),
+      signal:ctrl.signal
     });
+    clearTimeout(timeoutID);
     if(!res.ok) throw new Error('proxy '+res.status);
     const {defs}=await res.json();
-    defs.forEach(d=>{
-      document.querySelectorAll('.sum-card').forEach(card=>{
-        const termEl=card.querySelector('.sum-term');
-        if(termEl&&termEl.textContent===d.term){
-          card.querySelectorAll('.sum-def').forEach(el=>el.remove());
-          const def=document.createElement('div');
-          def.className='sum-def'; def.textContent=d.definition;
-          card.appendChild(def);
-        }
-      });
-    });
-  }catch(e){
-    document.querySelectorAll('.sum-def').forEach(el=>{
+    if(!Array.isArray(defs)||!defs.length) throw new Error('empty');
+    applyDefs(defs);
+    document.querySelectorAll('.sum-def.loading, .sum-def.loading2').forEach(el=>{
       el.className='sum-def'; el.textContent='Check your notes for this one.';
     });
+    setDefsStatus('hide');
+  }catch(e){
+    clearTimeout(timeoutID);
+    console.error('fetchDefs failed:', e);
+    document.querySelectorAll('.sum-def.loading, .sum-def.loading2').forEach(el=>{
+      el.className='sum-def'; el.textContent='Check your notes for this one.';
+    });
+    const isTimeout=e && (e.name==='AbortError' || String(e).includes('timeout'));
+    setDefsStatus('err', isTimeout?'Definitions timed out.':'Couldn’t load definitions.');
   }
 }
 
 function playAgain(){
+  setDefsStatus('hide');
   showScreen('screen-home'); S.subject='Biology';
   initHome();
 }
