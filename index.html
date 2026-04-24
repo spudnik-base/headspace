@@ -1081,21 +1081,15 @@ function renderSummaryTab(){
 async function fetchDefs(){
   const allItems=[...S.score.passed,...S.score.correct.slice(0,4)];
   if(!allItems.length) return;
-  const termList=allItems.map(i=>`${i.term} (${i.subject})`).join(', ');
+  const terms=allItems.map(i=>({term:i.term,subject:i.subject}));
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/define',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1500,
-        messages:[{role:'user',content:`You are an IB examiner. For each term, write one crisp sentence definition (max 25 words) suitable for a 17-year-old IB student. Be precise and exam-relevant. Return ONLY a JSON array, no markdown, no backticks. Format: [{"term":"...","definition":"..."}]. Terms: ${termList}`}]
-      })
+      body:JSON.stringify({terms})
     });
-    const data=await res.json();
-    const raw=data.content.map(b=>b.text||'').join('');
-    const clean=raw.replace(/```json|```/g,'').trim();
-    const defs=JSON.parse(clean);
+    if(!res.ok) throw new Error('proxy '+res.status);
+    const {defs}=await res.json();
     defs.forEach(d=>{
       document.querySelectorAll('.sum-card').forEach(card=>{
         const termEl=card.querySelector('.sum-term');
