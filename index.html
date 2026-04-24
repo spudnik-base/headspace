@@ -424,6 +424,22 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   font-family:var(--font-bang); font-size:18px; letter-spacing:2px; cursor:pointer;
   margin-top:10px; transition:background 0.1s;
 }
+.teacher-actions { display:flex; gap:8px; margin-top:10px; }
+.teacher-actions .teacher-add-btn { margin-top:0; flex:1; }
+.teacher-csv-btn {
+  background:var(--panel); color:var(--ink); border:var(--b2);
+  padding:8px 14px; font-family:var(--font-bang); font-size:14px; letter-spacing:1.5px;
+  cursor:pointer; transition:background 0.1s; display:inline-flex; align-items:center; gap:6px;
+  white-space:nowrap;
+}
+.teacher-csv-btn:hover { background:var(--paper2); }
+.teacher-csv-btn:active { background:var(--yellow); }
+.teacher-hint {
+  font-size:12px; color:var(--ink); opacity:0.6; font-weight:600;
+  min-height:16px; margin-top:6px; letter-spacing:0.3px;
+}
+.teacher-hint.ok { color:#0a6b1a; opacity:1; }
+.teacher-hint.err { color:var(--red); opacity:1; }
 .teacher-add-btn:hover { background:#333; }
 .custom-items { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
 .custom-item {
@@ -698,9 +714,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   <div class="teacher-inner">
     <div class="teacher-left">
       <div class="teacher-title">ADD TERMS</div>
-      <div class="teacher-sub">One term per line. These play as a custom deck separate from IB content. Perfect for pre-exam vocab or specific unit revision.</div>
+      <div class="teacher-sub">Paste one term per line, or upload a CSV. Column 1 is the term, optional column 2 is a category label. These play as a custom deck separate from IB content.</div>
       <textarea class="teacher-textarea" id="teacher-input" placeholder="Mitosis&#10;Photosynthesis&#10;Schlieffen Plan&#10;The Great Gatsby&#10;Nash Equilibrium..."></textarea>
-      <button class="teacher-add-btn" onclick="addCustomTerms()">+ ADD TO DECK</button>
+      <input type="file" id="teacher-csv" accept=".csv,.txt,text/csv,text/plain" style="display:none" onchange="onCsvFile(event)">
+      <div class="teacher-actions">
+        <button class="teacher-add-btn" onclick="addCustomTerms()">+ ADD TO DECK</button>
+        <button class="teacher-csv-btn" onclick="document.getElementById('teacher-csv').click()" title="Upload .csv or .txt">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          UPLOAD CSV
+        </button>
+      </div>
+      <div class="teacher-hint" id="teacher-hint"></div>
     </div>
     <div class="teacher-right">
       <div class="teacher-title" id="custom-label" style="margin-bottom:10px;">CUSTOM DECK (0)</div>
@@ -964,12 +988,77 @@ function selectTimer(sec,el){
 }
 
 // ══ TEACHER MODE ══
+function setTeacherHint(msg,tone){
+  const el=document.getElementById('teacher-hint');
+  el.textContent=msg||'';
+  el.className='teacher-hint'+(tone?' '+tone:'');
+}
+
 function addCustomTerms(){
   const inp=document.getElementById('teacher-input');
-  inp.value.split('\n').map(l=>l.trim()).filter(Boolean).forEach(t=>{
-    if(!S.customTerms.find(x=>x.term===t)) S.customTerms.push({term:t,category:'Custom',subject:'Custom'});
-  });
+  const rows=inp.value.split('\n').map(l=>l.trim()).filter(Boolean);
+  const added=ingestRows(rows.map(t=>[t]));
   inp.value=''; renderCustom();
+  setTeacherHint(added?`Added ${added} term${added===1?'':'s'}.`:'Nothing new to add.', added?'ok':'err');
+}
+
+function ingestRows(rows){
+  let added=0;
+  for(const row of rows){
+    const term=(row[0]||'').trim();
+    if(!term) continue;
+    const category=((row[1]||'').trim())||'Custom';
+    if(!S.customTerms.find(x=>x.term.toLowerCase()===term.toLowerCase())){
+      S.customTerms.push({term,category,subject:'Custom'});
+      added++;
+    }
+  }
+  return added;
+}
+
+function parseCSV(text){
+  text=text.replace(/^﻿/,'').replace(/\r\n?/g,'\n');
+  const rows=[]; let cur=[], field='', inQuote=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQuote){
+      if(c==='"'){
+        if(text[i+1]==='"'){ field+='"'; i++; }
+        else inQuote=false;
+      } else field+=c;
+    } else {
+      if(c==='"') inQuote=true;
+      else if(c===','){ cur.push(field); field=''; }
+      else if(c==='\n'){ cur.push(field); rows.push(cur); cur=[]; field=''; }
+      else field+=c;
+    }
+  }
+  if(field.length||cur.length){ cur.push(field); rows.push(cur); }
+  return rows
+    .map(r=>r.map(x=>x.trim()))
+    .filter(r=>r.some(x=>x.length));
+}
+
+function onCsvFile(ev){
+  const file=ev.target.files&&ev.target.files[0];
+  ev.target.value='';
+  if(!file) return;
+  if(file.size>512*1024){ setTeacherHint('File too large. Keep under 500 KB.','err'); return; }
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      let rows=parseCSV(String(reader.result||''));
+      if(rows.length && /^term$/i.test(rows[0][0]||'')) rows=rows.slice(1);
+      const added=ingestRows(rows);
+      renderCustom();
+      if(!added) setTeacherHint('No new terms found in that file.','err');
+      else setTeacherHint(`Imported ${added} term${added===1?'':'s'} from ${file.name}.`,'ok');
+    }catch(e){
+      setTeacherHint('Could not read that file.','err');
+    }
+  };
+  reader.onerror=()=>setTeacherHint('Could not read that file.','err');
+  reader.readAsText(file);
 }
 function renderCustom(){
   const list=document.getElementById('custom-items');
