@@ -1581,18 +1581,18 @@ function invertTilt(){
   // Flip the current session too: sign, rest, thresholds all negate
   S.calib.axisSign *= -1;
   S.calib.rest *= -1;
-  S.calib.thCorrect = S.calib.rest + 3.5;
-  S.calib.thPass = S.calib.rest - 3.5;
+  S.calib.thCorrect = S.calib.rest + 4.14;
+  S.calib.thPass = S.calib.rest - 4.14;
   S.tiltMotion = 0;
   const btn=document.querySelector('.game-swap-btn');
   if(btn) btn.classList.toggle('flipped', next==='1');
 }
 
 function detectTiltAxis(){
-  // Using gravity-z from DeviceMotionEvent; axis is conceptual only.
-  // Default sign: tilting phone forward (screen tips down toward floor) makes
-  // gravity-z positive. We want forward tilt = PASS = negative v, so sign=-1.
-  let sign = -1;
+  // Using gravity-z from DeviceMotionEvent. With phone to forehead in
+  // landscape (neutral pose ~ gamma -90), tilting the top of the phone
+  // FORWARD swings gz positive. Default sign=+1 so forward = CORRECT.
+  let sign = 1;
   if(localStorage.getItem('hs.tiltInvert')==='1') sign *= -1;
   return {axis:'gz', sign};
 }
@@ -1645,10 +1645,9 @@ function finalizeCalibration(){
     rest=sorted[Math.floor(sorted.length/2)];
   }
   S.calib.rest=rest;
-  // Thresholds are in m/s². g*sin(22°) ≈ 3.67, so ~3.5 triggers around a
-  // 22° tilt. DEAD zone in onTilt is correspondingly small (~1.0 m/s² ≈ 6°).
-  S.calib.thCorrect=rest+3.5;
-  S.calib.thPass=rest-3.5;
+  // 25° tilt on gravity-z: gz = 9.8 * sin(25°) ≈ 4.14 m/s²
+  S.calib.thCorrect=rest+4.14;
+  S.calib.thPass=rest-4.14;
 }
 
 function launchGame(){
