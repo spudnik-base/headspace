@@ -475,7 +475,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <path d="M60 30 Q65 20 72 22" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
   </svg>
   <div class="rotate-title">ROTATE YOUR <span>DEVICE</span></div>
-  <div class="rotate-sub">HeadSpace is a landscape game — turn sideways to play</div>
+  <div class="rotate-sub">HeadSpace is a landscape game. Turn sideways to play.</div>
 </div>
 
 <div id="app-wrap" style="position:relative;width:100%;height:100%;">
@@ -488,7 +488,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <div class="home-edition">IB EDITION</div>
     <div class="home-speech">
       <div class="speech-title">PICK YOUR SUBJECT</div>
-      <div class="speech-body">Tap a subject below, then hit Start. Hold phone to forehead, screen out — your team guesses the term!</div>
+      <div class="speech-body">Tap a subject below, then hit Start. Hold phone to forehead, screen out. Your team guesses the term.</div>
     </div>
     <button class="home-teacher-btn" onclick="showScreen('screen-teacher')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
@@ -552,7 +552,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   <div class="cdown-ring">
     <div class="cdown-num" id="cdown-num">3</div>
   </div>
-  <div class="cdown-hint">HOLD TO FOREHEAD — SCREEN FACING OUT!</div>
+  <div class="cdown-hint">HOLD TO FOREHEAD. SCREEN FACING OUT!</div>
   <div class="cdown-mode" id="cdown-mode"></div>
 </div>
 
@@ -634,7 +634,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <div class="teacher-right">
       <div class="teacher-title" id="custom-label" style="margin-bottom:10px;">CUSTOM DECK (0)</div>
       <div class="custom-items" id="custom-items">
-        <div class="empty-msg">No terms added yet — paste your list on the left.</div>
+        <div class="empty-msg">No terms added yet. Paste your list on the left.</div>
       </div>
       <button class="btn-manga" style="width:100%;display:block;" onclick="startCustomGame()">PLAY CUSTOM DECK ›</button>
     </div>
@@ -891,7 +891,7 @@ function addCustomTerms(){
 function renderCustom(){
   const list=document.getElementById('custom-items');
   document.getElementById('custom-label').textContent=`CUSTOM DECK (${S.customTerms.length})`;
-  if(!S.customTerms.length){ list.innerHTML='<div class="empty-msg">No terms added yet — paste your list on the left.</div>'; return; }
+  if(!S.customTerms.length){ list.innerHTML='<div class="empty-msg">No terms added yet. Paste your list on the left.</div>'; return; }
   list.innerHTML='';
   S.customTerms.forEach((t,i)=>{
     const el=document.createElement('div');
