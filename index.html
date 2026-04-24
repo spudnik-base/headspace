@@ -494,6 +494,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 .perm-title { font-family:var(--font-bang); font-size:36px; letter-spacing:3px; color:var(--ink); }
 .perm-desc { font-size:14px; color:var(--ink); opacity:0.6; text-align:center; max-width:320px; line-height:1.6; font-weight:500; }
 
+/* ── SL / HL TOGGLE ── */
+.sl-hl-toggle {
+  display: flex; border: var(--b2); border-radius: 6px; overflow: hidden;
+  background: var(--panel);
+}
+.sl-hl-opt {
+  flex: 1; background: none; border: none;
+  color: var(--ink); opacity: 0.55;
+  font-family: var(--font-bang); font-size: 14px; letter-spacing: 2px;
+  padding: 10px 6px; cursor: pointer; transition: all 0.12s;
+}
+.sl-hl-opt.active { background: var(--yellow); opacity: 1; box-shadow: inset 0 0 0 2px var(--ink); }
+.sl-hl-opt:hover:not(.active) { background: var(--paper2); opacity: 0.85; }
+
 /* ── THEME TOGGLE ── */
 .theme-toggle {
   display: flex; border: 2px solid rgba(255,255,255,0.25);
@@ -615,7 +629,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <div class="topic-chips" id="topic-chips"></div>
   </div>
   <div class="setup-right">
-    <div style="flex:1;">
+    <div style="flex:1;overflow-y:auto;">
       <div class="setup-section" style="margin-bottom:14px;">Round timer</div>
       <div class="timer-grid">
         <div class="timer-opt" onclick="selectTimer(30,this)"><span class="timer-val">30</span><span class="timer-unit">SECONDS</span></div>
@@ -623,8 +637,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
         <div class="timer-opt" onclick="selectTimer(90,this)"><span class="timer-val">90</span><span class="timer-unit">SECONDS</span></div>
         <div class="timer-opt" onclick="selectTimer(120,this)"><span class="timer-val">2</span><span class="timer-unit">MINUTES</span></div>
       </div>
+      <div id="setup-level" style="display:none;">
+        <div class="setup-section" style="margin:16px 0 8px;">Level</div>
+        <div class="sl-hl-toggle">
+          <button class="sl-hl-opt" data-level="sl" onclick="setLevel('sl')">SL ONLY</button>
+          <button class="sl-hl-opt active" data-level="hl" onclick="setLevel('hl')">SL + HL</button>
+        </div>
+      </div>
     </div>
-    <button class="btn-manga" onclick="startGame()" style="width:100%;text-align:center;display:block;">FIGHT! ›</button>
+    <button class="btn-manga" onclick="startGame()" style="width:100%;text-align:center;display:block;margin-top:12px;">FIGHT! ›</button>
   </div>
 </div>
 
@@ -806,11 +827,22 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 // IB CONTENT: 50+ validated syllabus terms per subject.
 const IB = {
   "Biology":{icon:"bio",topics:{
-    "Cell Biology":["Cell membrane","Mitosis","Meiosis","Osmosis","Active transport","Facilitated diffusion","Endocytosis","Exocytosis","ATP synthesis","Ribosome","Endoplasmic reticulum","Golgi apparatus","Cell wall","Lysosome","Mitochondria","Chloroplast","Cell cycle","Apoptosis","Prokaryote","Eukaryote","Stem cell"],
-    "Genetics":["Allele","Genotype","Phenotype","Codominance","Crossing over","Hardy-Weinberg","Gene mutation","Transcription","Translation","Codon","Epigenetics","Gel electrophoresis","PCR","Karyotype","Plasmid","Recombinant DNA","Gene therapy","Sex linkage","Non-disjunction"],
-    "Ecology":["Trophic level","Biomass pyramid","Ecological succession","Carrying capacity","Keystone species","Eutrophication","Biodiversity","Symbiosis","Limiting factor","Nutrient cycle","Ecological niche","Biome","Invasive species","Biomagnification","Primary productivity","Nitrogen cycle","Greenhouse effect"],
-    "Evolution & Physiology":["Natural selection","Allopatric speciation","Analogous structures","Phylogenetic tree","Genetic drift","Adaptive radiation","Punctuated equilibrium","Vestigial structures","Sexual selection","Founder effect","Bottleneck effect","Gene pool","Cladogram","Convergent evolution","Homeostasis","Negative feedback","Nephron","Action potential","Antibody","Vaccination"]
-  }},
+    "Cells":["Cell membrane","Mitosis","Meiosis","Osmosis","Active transport","Facilitated diffusion","Endocytosis","Exocytosis","Prokaryote","Eukaryote","Ribosome","Mitochondria","Cell wall","Stem cell","Cell differentiation","Fluid mosaic model","Endosymbiotic theory"],
+    "Biological Molecules":["Monosaccharide","Polysaccharide","Lipid","Triglyceride","Phospholipid","Amino acid","Protein","Peptide bond","DNA","RNA","Nucleotide","Complementary base pairing","Condensation reaction","Hydrolysis","Quaternary structure"],
+    "Metabolism":["ATP","Aerobic respiration","Anaerobic respiration","Fermentation","Glycolysis","Chlorophyll","Light-dependent reactions","Calvin cycle","Thylakoid","Stroma","Limiting factor","Krebs cycle","Electron transport chain","Oxidative phosphorylation","RuBisCO"],
+    "Human Physiology":["Homeostasis","Heart","Artery","Vein","Capillary","Haemoglobin","Antibody","Vaccination","Alveolus","Gas exchange","Ventilation","Insulin","Hormone","Neuron","Synapse","Action potential","Enzyme","Peristalsis","Negative feedback","Cardiac cycle","Nephron"],
+    "Ecology":["Ecosystem","Population","Community","Trophic level","Biomass pyramid","Carrying capacity","Keystone species","Biodiversity","Symbiosis","Eutrophication","Biomagnification","Ecological succession","Nitrogen cycle","Carbon cycle","Greenhouse effect","Ecological niche","Invasive species"],
+    "Evolution & Natural Selection":["Natural selection","Mutation","Allele","Sexual selection","Artificial selection","Speciation","Genetic drift","Founder effect","Bottleneck effect","Gene pool","Phylogenetic tree","Adaptive radiation","Analogous structure","Homologous structure","Fossil record","Hardy-Weinberg","Allopatric speciation","Punctuated equilibrium","Cladogram"],
+    "Plants":["Xylem","Phloem","Stomata","Transpiration","Guard cell","Leaf structure","Translocation","Cohesion-tension theory","Meristem","Auxin","Vascular bundle","Palisade mesophyll","Root pressure"]
+  }, hl:[
+    "Fluid mosaic model","Endosymbiotic theory",
+    "Condensation reaction","Hydrolysis","Quaternary structure",
+    "Krebs cycle","Electron transport chain","Oxidative phosphorylation","RuBisCO",
+    "Negative feedback","Cardiac cycle","Nephron",
+    "Ecological niche","Invasive species",
+    "Hardy-Weinberg","Allopatric speciation","Punctuated equilibrium","Cladogram",
+    "Translocation","Cohesion-tension theory","Meristem","Auxin","Vascular bundle","Palisade mesophyll","Root pressure"
+  ]},
   "Chemistry":{icon:"chem",topics:{
     "Atomic Structure":["Electron configuration","Quantum number","Orbital","Isotope","Mass spectrometry","Ionisation energy","Atomic radius","Electronegativity","Electron affinity","Periodic trend","Aufbau principle","Shielding effect","Emission spectrum","Hund's rule"],
     "Bonding":["Covalent bond","Ionic bond","Metallic bonding","Hydrogen bond","Van der Waals forces","Lewis structure","Resonance","Bond polarity","Lattice enthalpy","Molecular geometry","VSEPR theory","Dipole moment","Hybridisation","Giant covalent structure","London dispersion"],
@@ -925,6 +957,7 @@ const ICONS = {
 // ══ APP STATE ══
 const S = {
   subject: 'Biology', topics: [], duration: 60,
+  level: 'hl',
   deck: [], idx: 0, score: {correct:[], passed:[]},
   timeLeft: 60, timerID: null, tiltEnabled: false,
   customTerms: [], tiltCooldown: 0,
@@ -1047,7 +1080,15 @@ function goToSetup(){
     };
     chips.appendChild(chip);
   });
+  const hasHL = Array.isArray(data.hl) && data.hl.length>0;
+  document.getElementById('setup-level').style.display = hasHL ? '' : 'none';
+  document.querySelectorAll('.sl-hl-opt').forEach(b=>b.classList.toggle('active', b.dataset.level===S.level));
   showScreen('screen-setup');
+}
+
+function setLevel(level){
+  S.level = (level==='sl') ? 'sl' : 'hl';
+  document.querySelectorAll('.sl-hl-opt').forEach(b=>b.classList.toggle('active', b.dataset.level===S.level));
 }
 
 function selectTimer(sec,el){
@@ -1168,8 +1209,16 @@ function drawSpeedLines(){
 
 // ══ GAME ══
 function buildDeck(){
-  const data=IB[S.subject]; let terms=[];
-  S.topics.forEach(t=>{ data.topics[t].forEach(term=>terms.push({term,category:t,subject:S.subject})); });
+  const data=IB[S.subject];
+  const hlSet=new Set((data.hl||[]).map(t=>t.toLowerCase()));
+  const skipHL = S.level==='sl' && hlSet.size>0;
+  let terms=[];
+  S.topics.forEach(t=>{
+    (data.topics[t]||[]).forEach(term=>{
+      if(skipHL && hlSet.has(term.toLowerCase())) return;
+      terms.push({term,category:t,subject:S.subject});
+    });
+  });
   return shuffle(terms);
 }
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
