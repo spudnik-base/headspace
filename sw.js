@@ -1,4 +1,4 @@
-const VERSION = 'headspace-v2';
+const VERSION = 'headspace-v3';
 const CORE = [
   './',
   './index.html',
@@ -6,7 +6,11 @@ const CORE = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
-  './icons/favicon-32.png'
+  './icons/favicon-32.png',
+  './fonts/bangers-latin.woff2',
+  './fonts/bangers-latin-ext.woff2',
+  './fonts/outfit-latin.woff2',
+  './fonts/outfit-latin-ext.woff2'
 ];
 
 self.addEventListener('install', (event) => {
