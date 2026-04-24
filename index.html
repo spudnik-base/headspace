@@ -27,6 +27,8 @@
   --yellow-dim: rgba(245,200,0,0.12);
   --blue-ink: #001F5B;
   --white: #FEFCF8;
+  --warn: #FF8C00;
+  --info: #7BD4FF;
   --gutter: 6px;
   --b3: 3px solid var(--ink);
   --b4: 4px solid var(--ink);
@@ -37,6 +39,25 @@
   --dots-lg: radial-gradient(circle, rgba(10,10,10,0.12) 1.5px, transparent 1.5px) 0 0 / 10px 10px;
   --dots-red: radial-gradient(circle, rgba(200,0,26,0.22) 1px, transparent 1px) 0 0 / 7px 7px;
   --dots-yel: radial-gradient(circle, rgba(245,200,0,0.35) 1.5px, transparent 1.5px) 0 0 / 8px 8px;
+}
+
+body.theme-pastel {
+  --ink: #2E221C;
+  --paper: #FBEEE1;
+  --paper2: #F3DEC7;
+  --panel: #FFF8EE;
+  --red: #D97A6C;
+  --red-dim: rgba(217,122,108,0.12);
+  --yellow: #F2CC6B;
+  --yellow-dim: rgba(242,204,107,0.22);
+  --blue-ink: #6A7BA8;
+  --white: #FFFDF7;
+  --warn: #E8A16A;
+  --info: #A5C4D8;
+  --dots-sm: radial-gradient(circle, rgba(46,34,28,0.16) 1px, transparent 1px) 0 0 / 6px 6px;
+  --dots-lg: radial-gradient(circle, rgba(46,34,28,0.1) 1.5px, transparent 1.5px) 0 0 / 10px 10px;
+  --dots-red: radial-gradient(circle, rgba(217,122,108,0.24) 1px, transparent 1px) 0 0 / 7px 7px;
+  --dots-yel: radial-gradient(circle, rgba(242,204,107,0.42) 1.5px, transparent 1.5px) 0 0 / 8px 8px;
 }
 
 *{ box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -225,7 +246,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   position: absolute; left: 0; top: 0; bottom: 0;
   background: var(--yellow); transition: width 1s linear, background-color 0.3s;
 }
-.game-timer-fill.warn { background: #FF8C00; }
+.game-timer-fill.warn { background: var(--warn); }
 .game-timer-fill.danger { background: var(--red); }
 .game-scores {
   display: flex; align-items: center; gap: 0;
@@ -243,7 +264,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   color: var(--white); padding: 0 18px; min-width: 72px; text-align: center;
   border-right: var(--b3); height: 100%; display: flex; align-items: center; justify-content: center;
 }
-.game-countdown.warn { color: #FF8C00; }
+.game-countdown.warn { color: var(--warn); }
 .game-countdown.danger { color: var(--red); animation: cdanger 0.5s ease-in-out infinite alternate; }
 @keyframes cdanger { from{ opacity:1 } to{ opacity:0.4 } }
 
@@ -369,7 +390,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 .stat-lbl { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; opacity:0.5; color:var(--white); }
 .stat-cell.c .stat-val { color:var(--yellow); }
 .stat-cell.p .stat-val { color:var(--red); }
-.stat-cell.pct .stat-val { color:#7BD4FF; }
+.stat-cell.pct .stat-val { color:var(--info); }
 .summary-play-again { margin-top:auto; position:relative;z-index:1; }
 
 .summary-right {
@@ -473,6 +494,21 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 .perm-title { font-family:var(--font-bang); font-size:36px; letter-spacing:3px; color:var(--ink); }
 .perm-desc { font-size:14px; color:var(--ink); opacity:0.6; text-align:center; max-width:320px; line-height:1.6; font-weight:500; }
 
+/* ── THEME TOGGLE ── */
+.theme-toggle {
+  display: flex; border: 2px solid rgba(255,255,255,0.25);
+  border-radius: 8px; overflow: hidden; margin-top: 10px;
+  position: relative; z-index: 1; background: rgba(0,0,0,0.2);
+}
+.theme-opt {
+  flex: 1; background: none; border: none;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-bang); font-size: 13px; letter-spacing: 2px;
+  padding: 8px 4px; cursor: pointer; transition: all 0.15s;
+}
+.theme-opt.active { background: var(--yellow); color: var(--ink); }
+.theme-opt:hover:not(.active) { color: var(--yellow); }
+
 /* ── CARD FLIP (advance animation) ── */
 .term-card-wrap { perspective: 1000px; }
 .term-card-manga.card-flip { animation: cardFlip 0.32s cubic-bezier(.4,.0,.2,1); backface-visibility: hidden; }
@@ -553,6 +589,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
       TEACHER MODE
     </button>
+    <div class="theme-toggle" role="radiogroup" aria-label="Theme">
+      <button class="theme-opt active" data-theme="ink" onclick="setTheme('ink')">INK</button>
+      <button class="theme-opt" data-theme="pastel" onclick="setTheme('pastel')">PASTEL</button>
+    </div>
   </div>
   <div class="home-right">
     <div class="home-right-header">SELECT SUBJECT ·</div>
@@ -824,34 +864,33 @@ const IB = {
 
 // ══ CUSTOM SVG ICONS ══
 const ICONS = {
-  bio:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  bio:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <ellipse cx="24" cy="24" rx="14" ry="10" transform="rotate(-30 24 24)"/>
     <ellipse cx="24" cy="24" rx="14" ry="10" transform="rotate(30 24 24)"/>
-    <circle cx="24" cy="24" r="4" fill="#0A0A0A"/>
-    <circle cx="24" cy="24" r="2" fill="white"/>
-    <line x1="24" y1="10" x2="24" y2="14" stroke-width="2"/>
-    <line x1="24" y1="34" x2="24" y2="38" stroke-width="2"/>
+    <circle cx="24" cy="24" r="5" fill="var(--yellow)" stroke="var(--ink)" stroke-width="2"/>
+    <line x1="24" y1="8" x2="24" y2="12" stroke-width="2"/>
+    <line x1="24" y1="36" x2="24" y2="40" stroke-width="2"/>
   </svg>`,
-  chem:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  chem:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 42 L38 42 Q42 42 40 38 L32 26 L16 26 L8 38 Q6 42 10 42 Z" fill="var(--yellow)" stroke="none"/>
     <path d="M18 6 L18 22 L8 38 Q6 42 10 42 L38 42 Q42 42 40 38 L30 22 L30 6 Z"/>
     <line x1="18" y1="6" x2="30" y2="6"/>
-    <circle cx="18" cy="32" r="2.5" fill="#0A0A0A"/>
-    <circle cx="28" cy="36" r="2" fill="#0A0A0A"/>
-    <circle cx="22" cy="38" r="1.5" fill="#0A0A0A"/>
+    <circle cx="28" cy="36" r="2.5" fill="var(--red)" stroke="var(--ink)" stroke-width="1.5"/>
+    <circle cx="18" cy="32" r="1.8" fill="var(--ink)"/>
+    <circle cx="22" cy="38" r="1.3" fill="var(--ink)"/>
   </svg>`,
-  phys:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <polygon points="26,4 18,26 23,26 18,44 32,20 26,20 32,4" fill="#F5C800" stroke="#0A0A0A" stroke-width="2.5"/>
+  phys:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="39" cy="10" r="2.5" fill="var(--red)" stroke="none"/>
+    <circle cx="9" cy="39" r="2" fill="var(--red)" stroke="none"/>
+    <polygon points="26,4 18,26 23,26 18,44 32,20 26,20 32,4" fill="var(--yellow)" stroke="var(--ink)" stroke-width="2.5"/>
   </svg>`,
-  math:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M38 8 L22 8 L10 24 L22 40 L38 40"/>
-    <line x1="28" y1="18" x2="38" y2="18"/>
-    <line x1="28" y1="24" x2="40" y2="24"/>
-    <line x1="28" y1="30" x2="38" y2="30"/>
-    <line x1="10" y1="24" x2="14" y2="24" stroke-width="3"/>
+  math:`<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="11" width="42" height="26" fill="var(--yellow)" stroke="var(--ink)" stroke-width="2.5"/>
+    <text x="24" y="30" text-anchor="middle" font-family="'Bangers',Impact,sans-serif" font-size="17" fill="var(--ink)" letter-spacing="1">2+2=<tspan fill="var(--red)">5</tspan></text>
   </svg>`,
-  hist:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="10" y="8" width="28" height="4"/>
-    <rect x="10" y="36" width="28" height="4"/>
+  hist:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8" y="8" width="32" height="4" fill="var(--yellow)"/>
+    <rect x="8" y="36" width="32" height="4" fill="var(--ink)"/>
     <line x1="15" y1="12" x2="15" y2="36"/>
     <line x1="24" y1="12" x2="24" y2="36"/>
     <line x1="33" y1="12" x2="33" y2="36"/>
@@ -859,28 +898,27 @@ const ICONS = {
     <line x1="22" y1="14" x2="22" y2="34" stroke-width="1" opacity="0.4"/>
     <line x1="31" y1="14" x2="31" y2="34" stroke-width="1" opacity="0.4"/>
   </svg>`,
-  econ:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="6,38 14,28 22,32 34,14 42,18"/>
-    <polyline points="36,8 42,8 42,14"/>
-    <rect x="6" y="38" width="6" height="4"/>
-    <rect x="16" y="32" width="6" height="10"/>
-    <rect x="26" y="22" width="6" height="20"/>
+  econ:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6" y="36" width="7" height="6" fill="var(--yellow)"/>
+    <rect x="17" y="28" width="7" height="14" fill="var(--yellow)"/>
+    <rect x="28" y="18" width="7" height="24" fill="var(--yellow)"/>
+    <polyline points="6,36 14,26 22,30 34,12 42,16" stroke="var(--red)" stroke-width="3"/>
+    <polyline points="36,6 42,6 42,12" stroke="var(--red)" stroke-width="3"/>
   </svg>`,
-  psych:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M24 8 C14 8 8 15 8 22 C8 30 14 34 20 36 L20 40 L28 40 L28 36 C34 34 40 30 40 22 C40 15 34 8 24 8Z"/>
-    <line x1="19" y1="20" x2="19" y2="28"/>
-    <line x1="24" y1="17" x2="24" y2="28"/>
-    <line x1="29" y1="20" x2="29" y2="28"/>
-    <line x1="16" y1="24" x2="32" y2="24"/>
+  psych:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 8 C14 8 8 15 8 22 C8 30 14 34 20 36 L20 40 L28 40 L28 36 C34 34 40 30 40 22 C40 15 34 8 24 8Z" fill="var(--yellow)"/>
+    <line x1="19" y1="20" x2="19" y2="28" stroke="var(--ink)"/>
+    <line x1="24" y1="16" x2="24" y2="30" stroke="var(--red)" stroke-width="2.5"/>
+    <line x1="29" y1="20" x2="29" y2="28" stroke="var(--ink)"/>
+    <line x1="16" y1="24" x2="32" y2="24" stroke="var(--ink)"/>
   </svg>`,
-  eng:`<svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M10 8 L10 40 L24 34 L38 40 L38 8 L24 14 Z"/>
+  eng:`<svg viewBox="0 0 48 48" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 8 L10 40 L24 34 L38 40 L38 8 L24 14 Z" fill="var(--yellow)"/>
+    <rect x="30" y="8" width="4" height="12" fill="var(--red)" stroke="none"/>
     <line x1="24" y1="14" x2="24" y2="34"/>
-    <line x1="16" y1="18" x2="22" y2="16" stroke-width="1.5"/>
-    <line x1="16" y1="24" x2="22" y2="22" stroke-width="1.5"/>
-    <line x1="16" y1="30" x2="22" y2="28" stroke-width="1.5"/>
-    <line x1="32" y1="18" x2="26" y2="16" stroke-width="1.5"/>
-    <line x1="32" y1="24" x2="26" y2="22" stroke-width="1.5"/>
+    <line x1="16" y1="20" x2="22" y2="18" stroke-width="1.5"/>
+    <line x1="16" y1="26" x2="22" y2="24" stroke-width="1.5"/>
+    <line x1="32" y1="26" x2="26" y2="24" stroke-width="1.5"/>
   </svg>`
 };
 
@@ -1317,6 +1355,18 @@ function playAgain(){
   initHome();
 }
 
+// ══ THEME ══
+const THEME_KEY='hs.theme';
+const META_THEME={ ink:'#0A0A0A', pastel:'#FBEEE1' };
+function setTheme(name){
+  if(name!=='pastel') name='ink';
+  document.body.classList.toggle('theme-pastel', name==='pastel');
+  document.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('active', b.dataset.theme===name));
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', META_THEME[name]);
+  localStorage.setItem(THEME_KEY, name);
+}
+
 // ══ TEACHER PIN ══
 const PIN_KEY='hs.teacherPin';
 function openTeacher(){
@@ -1377,6 +1427,7 @@ function resetTeacherPin(){
 }
 
 // ══ INIT ══
+setTheme(localStorage.getItem(THEME_KEY)||'ink');
 initHome();
 renderCustom();
 
