@@ -92,20 +92,20 @@ body.theme-pastel {
 }
 
 body.theme-teal {
-  --ink: #003D34;
-  --paper: #7FEDD5;
-  --paper2: #5BDEC2;
-  --panel: #D9F7EC;
+  --ink: #00402C;
+  --paper: #8BF0C2;
+  --paper2: #61E0AE;
+  --panel: #DCF8DE;
   --red: #FF6B6B;
   --red-dim: rgba(255,107,107,0.16);
   --yellow: #FFE066;
   --yellow-dim: rgba(255,224,102,0.24);
-  --blue-ink: #1CA58E;
-  --white: #F5FDF9;
+  --blue-ink: #24A67C;
+  --white: #F5FDF5;
   --warn: #FF9F43;
-  --info: #22C9AF;
-  --dots-sm: radial-gradient(circle, rgba(0,61,52,0.14) 1px, transparent 1px) 0 0 / 6px 6px;
-  --dots-lg: radial-gradient(circle, rgba(0,61,52,0.10) 1.5px, transparent 1.5px) 0 0 / 10px 10px;
+  --info: #34CB9A;
+  --dots-sm: radial-gradient(circle, rgba(0,64,44,0.14) 1px, transparent 1px) 0 0 / 6px 6px;
+  --dots-lg: radial-gradient(circle, rgba(0,64,44,0.10) 1.5px, transparent 1.5px) 0 0 / 10px 10px;
   --dots-red: radial-gradient(circle, rgba(255,107,107,0.22) 1px, transparent 1px) 0 0 / 7px 7px;
   --dots-yel: radial-gradient(circle, rgba(255,224,102,0.36) 1.5px, transparent 1.5px) 0 0 / 8px 8px;
 }
@@ -1984,7 +1984,7 @@ function playAgain(){
 
 // ══ THEME ══
 const THEME_KEY='hs.theme';
-const META_THEME={ ink:'#0A0A0A', pastel:'#E7D1FF', teal:'#7FEDD5' };
+const META_THEME={ ink:'#0A0A0A', pastel:'#E7D1FF', teal:'#8BF0C2' };
 function setTheme(name){
   if(!(name in META_THEME)) name='ink';
   document.body.classList.toggle('theme-pastel', name==='pastel');
