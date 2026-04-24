@@ -672,13 +672,18 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 /* ── TILT DEBUG OVERLAY (only when ?debug=1 is in URL) ── */
 #tilt-debug {
   display: none; position: fixed; top: 6px; left: 6px;
-  z-index: 10000; pointer-events: none;
+  z-index: 10000; cursor: pointer;
   background: rgba(0,0,0,0.82); color: #9effa0;
   font: 600 10px/1.35 ui-monospace, Menlo, Consolas, monospace;
   padding: 5px 8px; border-radius: 4px; white-space: pre;
   border: 1px solid rgba(158,255,160,0.3);
 }
 #tilt-debug.on { display: block; }
+#tilt-debug::after {
+  content: 'tap to hide';
+  display: block; margin-top: 3px;
+  font-size: 9px; opacity: 0.7; letter-spacing: 0.5px;
+}
 
 /* ── MODAL ── */
 .modal-overlay {
@@ -1538,7 +1543,11 @@ function getTiltRaw(e){
 }
 
 const DEBUG_KEY='hs.debug';
-let DEBUG = new URLSearchParams(location.search).has('debug') || localStorage.getItem(DEBUG_KEY)==='1';
+// localStorage wins over URL so toggleDebug actually sticks. URL ?debug=1
+// is only used the first time when localStorage has no value yet.
+let DEBUG = (localStorage.getItem(DEBUG_KEY)===null)
+  ? new URLSearchParams(location.search).has('debug')
+  : localStorage.getItem(DEBUG_KEY)==='1';
 function toggleDebug(){
   DEBUG = !DEBUG;
   localStorage.setItem(DEBUG_KEY, DEBUG?'1':'0');
@@ -1550,9 +1559,14 @@ let _debugTaps=0, _debugTapTimer=null;
 function debugLogoTap(){
   _debugTaps++;
   clearTimeout(_debugTapTimer);
-  _debugTapTimer=setTimeout(()=>{_debugTaps=0;},700);
+  _debugTapTimer=setTimeout(()=>{_debugTaps=0;},1500);
   if(_debugTaps>=5){ _debugTaps=0; toggleDebug(); }
 }
+// Tap the debug overlay itself to dismiss it from any screen
+document.addEventListener('DOMContentLoaded',()=>{
+  const dbg=document.getElementById('tilt-debug');
+  if(dbg) dbg.addEventListener('click', toggleDebug);
+});
 function updateTiltDebug(e){
   const dbg=document.getElementById('tilt-debug');
   if(!dbg) return;
