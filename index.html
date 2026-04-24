@@ -1397,8 +1397,8 @@ function detectTiltAxis(){
     ? screen.orientation.angle
     : (typeof window.orientation === 'number' ? window.orientation : 0);
   const a = ((raw % 360) + 360) % 360;
-  if(a === 90)  return {axis:'gamma', sign:-1};
-  if(a === 270) return {axis:'gamma', sign: 1};
+  if(a === 90)  return {axis:'gamma', sign: 1};
+  if(a === 270) return {axis:'gamma', sign:-1};
   return {axis:'beta', sign: 1};
 }
 
