@@ -126,7 +126,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   color: var(--ink); opacity: 0.45; margin-bottom: 14px; text-transform: uppercase;
 }
 .subject-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); flex: 1;
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: var(--gutter); flex: 1;
 }
 .subject-card {
   background: var(--panel); border: var(--b3);
@@ -668,52 +668,62 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 </div><!-- /app-wrap -->
 
 <script>
-// ══ IB CONTENT: 30-40 terms per subject ══
+// IB CONTENT: 50+ validated syllabus terms per subject.
 const IB = {
   "Biology":{icon:"bio",topics:{
-    "Cell Biology":["Cell membrane","Mitosis","Meiosis","Osmosis","Active transport","Endocytosis","Exocytosis","ATP synthesis","Ribosome","Endoplasmic reticulum","Golgi apparatus","Cell wall","Lysosome","Mitochondria","Cell cycle","Apoptosis","Prokaryote","Eukaryote"],
-    "Genetics":["Allele","Genotype","Phenotype","Codominance","Epistasis","Crossing over","Hardy-Weinberg","Gene mutation","Transcription","Translation","Codon","Operon","Epigenetics","Gel electrophoresis","PCR","Karyotype","Plasmid"],
-    "Ecology":["Trophic level","Biomass pyramid","Ecological succession","Carrying capacity","Keystone species","Eutrophication","Biodiversity index","Symbiosis","Limiting factor","Nutrient cycle","Ecological niche","Biome","Population dynamics","Invasive species","Biomagnification"],
-    "Evolution":["Natural selection","Allopatric speciation","Analogous structures","Phylogenetic tree","Genetic drift","Adaptive radiation","Punctuated equilibrium","Vestigial structures","Sexual selection","Founder effect","Bottleneck effect","Gene pool","Cladogram","Convergent evolution"]
+    "Cell Biology":["Cell membrane","Mitosis","Meiosis","Osmosis","Active transport","Facilitated diffusion","Endocytosis","Exocytosis","ATP synthesis","Ribosome","Endoplasmic reticulum","Golgi apparatus","Cell wall","Lysosome","Mitochondria","Chloroplast","Cell cycle","Apoptosis","Prokaryote","Eukaryote","Stem cell"],
+    "Genetics":["Allele","Genotype","Phenotype","Codominance","Crossing over","Hardy-Weinberg","Gene mutation","Transcription","Translation","Codon","Epigenetics","Gel electrophoresis","PCR","Karyotype","Plasmid","Recombinant DNA","Gene therapy","Sex linkage","Non-disjunction"],
+    "Ecology":["Trophic level","Biomass pyramid","Ecological succession","Carrying capacity","Keystone species","Eutrophication","Biodiversity","Symbiosis","Limiting factor","Nutrient cycle","Ecological niche","Biome","Invasive species","Biomagnification","Primary productivity","Nitrogen cycle","Greenhouse effect"],
+    "Evolution & Physiology":["Natural selection","Allopatric speciation","Analogous structures","Phylogenetic tree","Genetic drift","Adaptive radiation","Punctuated equilibrium","Vestigial structures","Sexual selection","Founder effect","Bottleneck effect","Gene pool","Cladogram","Convergent evolution","Homeostasis","Negative feedback","Nephron","Action potential","Antibody","Vaccination"]
   }},
   "Chemistry":{icon:"chem",topics:{
-    "Atomic Structure":["Electron configuration","Quantum number","Orbital","Isotope","Mass spectrometry","Ionisation energy","Atomic radius","Electronegativity","Electron affinity","Periodic trend","Aufbau principle","Shielding effect","First ionisation energy"],
-    "Bonding":["Covalent bond","Ionic bond","Metallic bonding","Hydrogen bond","Van der Waals forces","Lewis structure","Resonance","Bond polarity","Lattice enthalpy","Molecular geometry","VSEPR theory","Dipole moment","Hybridisation"],
-    "Reactions":["Le Chatelier's principle","Activation energy","Rate constant","Buffer solution","Titration endpoint","Standard enthalpy","Gibbs free energy","Hess's law","Equilibrium constant","Arrhenius equation","Collision theory","Half-equation","Redox reaction","Disproportionation"],
-    "Organic":["Alkane","Alkene","Benzene","Ester","Aldehyde","Ketone","Carboxylic acid","Markovnikov's rule","Stereoisomers","Nucleophilic substitution","Electrophilic addition","Condensation polymer","Optical isomer","Free radical"]
+    "Atomic Structure":["Electron configuration","Quantum number","Orbital","Isotope","Mass spectrometry","Ionisation energy","Atomic radius","Electronegativity","Electron affinity","Periodic trend","Aufbau principle","Shielding effect","Emission spectrum","Hund's rule"],
+    "Bonding":["Covalent bond","Ionic bond","Metallic bonding","Hydrogen bond","Van der Waals forces","Lewis structure","Resonance","Bond polarity","Lattice enthalpy","Molecular geometry","VSEPR theory","Dipole moment","Hybridisation","Giant covalent structure","London dispersion"],
+    "Reactions":["Le Chatelier's principle","Activation energy","Rate constant","Buffer solution","Titration endpoint","Standard enthalpy","Gibbs free energy","Hess's law","Equilibrium constant","Arrhenius equation","Collision theory","Redox reaction","Disproportionation","Bond enthalpy","Rate equation","Standard electrode potential","Voltaic cell"],
+    "Organic":["Alkane","Alkene","Alkyne","Benzene","Ester","Aldehyde","Ketone","Carboxylic acid","Amine","Amide","Markovnikov's rule","Stereoisomer","Nucleophilic substitution","Electrophilic addition","Condensation polymer","Optical isomer","Free radical","Addition polymer"]
   }},
   "Physics":{icon:"phys",topics:{
-    "Mechanics":["Newton's third law","Conservation of momentum","Torque","Centripetal force","Projectile motion","Simple harmonic motion","Gravitational potential energy","Hooke's law","Terminal velocity","Escape velocity","Impulse","Centre of mass","Elastic collision"],
-    "Waves":["Doppler effect","Diffraction","Interference","Polarisation","Standing wave","Superposition","Total internal reflection","Refractive index","Snell's law","Young's double slit","Resonance","Phase difference","Path difference","Coherence"],
-    "Electricity":["Ohm's law","Kirchhoff's voltage law","Capacitance","Internal resistance","EMF","Magnetic flux","Faraday's law","Lenz's law","Transformer","AC circuit","Root mean square","Power dissipation","Resistivity","Drift velocity"],
-    "Modern Physics":["Photoelectric effect","Wave-particle duality","Half-life","Binding energy","Nuclear fission","Nuclear fusion","De Broglie wavelength","Heisenberg uncertainty","Pair production","Radioactive decay","Mass defect","Nuclear equation","Standard model","Quark"]
+    "Mechanics":["Newton's third law","Conservation of momentum","Torque","Centripetal force","Projectile motion","Simple harmonic motion","Gravitational potential energy","Hooke's law","Terminal velocity","Escape velocity","Impulse","Centre of mass","Elastic collision","Angular velocity","Moment of inertia"],
+    "Waves & Optics":["Doppler effect","Diffraction","Interference","Polarisation","Standing wave","Superposition","Total internal reflection","Refractive index","Snell's law","Young's double slit","Resonance","Phase difference","Path difference","Coherence","Single slit diffraction","Thin film interference"],
+    "Electricity & Magnetism":["Ohm's law","Kirchhoff's voltage law","Capacitance","Internal resistance","Electromotive force","Magnetic flux","Faraday's law","Lenz's law","Transformer","AC circuit","Root mean square","Resistivity","Drift velocity","Hall effect","Lorentz force"],
+    "Modern & Thermal":["Photoelectric effect","Wave-particle duality","Half-life","Binding energy","Nuclear fission","Nuclear fusion","De Broglie wavelength","Heisenberg uncertainty","Pair production","Radioactive decay","Mass defect","Standard model","Quark","Specific heat capacity","Latent heat","Ideal gas law","Entropy","Carnot cycle"]
   }},
-  "Mathematics":{icon:"math",topics:{
-    "Calculus":["Differentiation","Chain rule","Product rule","Integration by parts","L'Hôpital's rule","Taylor series","Implicit differentiation","Riemann sum","Related rates","Differential equation","Fundamental theorem","Maclaurin series","Euler's method"],
-    "Statistics":["Standard deviation","Null hypothesis","P-value","Pearson correlation","Regression line","Confidence interval","Chi-squared test","Central limit theorem","Bayes' theorem","Binomial distribution","Normal distribution","Type I error","Unbiased estimator"],
-    "Algebra":["Complex number","Matrix multiplication","Determinant","Eigenvalue","Logarithm","Permutation","Combination","Geometric sequence","Proof by induction","De Moivre's theorem","Modulus-argument form","Partial fractions","Rational function"],
-    "Geometry":["Vector cross product","Dot product","Direction cosines","Parametric equation","Arc length","Surface of revolution","Implicit differentiation","Polar coordinates","Curvature","Gradient vector"]
+  "Math AA":{icon:"math",topics:{
+    "Number & Algebra":["Arithmetic sequence","Geometric sequence","Sigma notation","Binomial theorem","Logarithm","Complex number","De Moivre's theorem","Modulus-argument form","Partial fractions","Proof by induction","Argand diagram","Permutation","Combination","Exponential form"],
+    "Functions":["Quadratic function","Rational function","Composite function","Inverse function","Polynomial","Asymptote","Even function","Odd function","Factor theorem","Remainder theorem","Discriminant","Transformation of graphs"],
+    "Geometry & Trigonometry":["Vector cross product","Dot product","Scalar projection","Vector equation of a line","Vector equation of a plane","Unit circle","Double angle formula","Radian measure","Arc length","Sector area","Sine rule","Cosine rule","Compound angle formula"],
+    "Statistics & Probability":["Standard deviation","Variance","Normal distribution","Binomial distribution","Bayes' theorem","Expected value","Probability density function","Conditional probability","Central limit theorem","Null hypothesis","Confidence interval","Regression line","Pearson correlation"],
+    "Calculus":["Differentiation","Chain rule","Product rule","Quotient rule","Implicit differentiation","Integration by parts","Integration by substitution","Related rates","L'Hôpital's rule","Maclaurin series","Fundamental theorem of calculus","Euler's method","Slope field","Separation of variables","Differential equation","Volume of revolution"]
+  }},
+  "Math AI":{icon:"math",topics:{
+    "Number & Algebra":["Scientific notation","Logarithm","Exponential model","Arithmetic sequence","Geometric sequence","Compound interest","Amortisation","Annuity","Sigma notation","Approximation error","Significant figures"],
+    "Functions":["Linear function","Quadratic function","Exponential function","Logarithmic function","Cubic function","Piecewise function","Sinusoidal model","Logistic model","Inverse function","Asymptote","Transformation of graphs"],
+    "Geometry & Trigonometry":["Voronoi diagram","Adjacency matrix","Unit circle","Sine rule","Cosine rule","Volume of a cone","Surface area of a sphere","Radian","Arc length","Sector area","Vector equation of a line","Dot product","3D distance formula"],
+    "Statistics & Probability":["Standard deviation","Variance","Normal distribution","Binomial distribution","Chi-squared test","t-test","Null hypothesis","P-value","Regression line","Pearson correlation","Spearman rank","Confidence interval","Contingency table","Expected value","Conditional probability","Bayes' theorem"],
+    "Calculus":["Differentiation","Integration","Chain rule","Trapezoidal rule","Related rates","Slope field","Euler's method","Differential equation","Definite integral","Area under a curve"]
   }},
   "History":{icon:"hist",topics:{
-    "WWI":["Schlieffen Plan","Trench warfare","War reparations","Total war","Propaganda","Stalemate","War guilt clause","Armistice","Western Front","Conscription","Attrition","Home front"],
-    "WWII":["Appeasement","Blitzkrieg","D-Day","Totalitarianism","Final Solution","Lend-Lease Act","Island hopping","Atlantic Charter","Kamikazes","War crimes tribunal"],
-    "Cold War":["Marshall Plan","Truman Doctrine","NATO","Berlin Wall","Cuban Missile Crisis","McCarthyism","Détente","Proxy war","Mutual assured destruction","SALT treaties","Arms race","Containment policy","Iron Curtain","Brinksmanship","Glasnost"],
-    "Decolonisation":["Apartheid","Non-Aligned Movement","Partition of India","Bandung Conference","Suez Crisis","Neo-colonialism","Pan-Africanism","White minority rule","Civil disobedience","Nationalism"]
+    "WWI":["Schlieffen Plan","Trench warfare","War reparations","Total war","Propaganda","Stalemate","War guilt clause","Armistice","Western Front","Conscription","Attrition","Home front","Fourteen Points","Treaty of Versailles","League of Nations","July Crisis"],
+    "WWII":["Appeasement","Blitzkrieg","D-Day","Totalitarianism","Final Solution","Lend-Lease Act","Island hopping","Atlantic Charter","Kamikaze attack","War crimes tribunal","Munich Agreement","Non-aggression Pact","Operation Barbarossa","Pearl Harbor","Manhattan Project","Nuremberg Trials"],
+    "Cold War":["Marshall Plan","Truman Doctrine","NATO","Berlin Wall","Cuban Missile Crisis","McCarthyism","Détente","Proxy war","Mutual assured destruction","SALT treaties","Arms race","Containment policy","Iron Curtain","Brinksmanship","Glasnost","Warsaw Pact","Space Race","Prague Spring","Perestroika"],
+    "Decolonisation & Civil Rights":["Apartheid","Non-Aligned Movement","Partition of India","Bandung Conference","Suez Crisis","Neo-colonialism","Pan-Africanism","White minority rule","Civil disobedience","Nationalism","Sharpeville massacre","Soweto uprising","Mandate system","Self-determination"]
   }},
   "Economics":{icon:"econ",topics:{
-    "Microeconomics":["Price elasticity","Consumer surplus","Marginal utility","Price discrimination","Natural monopoly","Oligopoly","Nash equilibrium","Market failure","Negative externality","Indifference curve","Marginal cost","Allocative efficiency","Deadweight loss","Monopsony","Moral hazard"],
-    "Macroeconomics":["GDP","Inflation rate","Phillips curve","Fiscal policy","Quantitative easing","Multiplier effect","Current account","Exchange rate","Keynesian economics","Supply-side policy","LRAS curve","Output gap","Stagflation","Crowding out","Balance of payments"],
-    "International":["Comparative advantage","Terms of trade","Trade deficit","Protectionism","Import tariff","Exchange rate regime","Capital account","Trade liberalisation","Purchasing power parity","Bretton Woods"]
+    "Microeconomics":["Price elasticity","Consumer surplus","Producer surplus","Marginal utility","Price discrimination","Natural monopoly","Oligopoly","Nash equilibrium","Market failure","Negative externality","Positive externality","Indifference curve","Marginal cost","Allocative efficiency","Deadweight loss","Monopsony","Moral hazard","Income elasticity","Cross elasticity","Lorenz curve","Gini coefficient"],
+    "Macroeconomics":["GDP","Inflation rate","Phillips curve","Fiscal policy","Quantitative easing","Multiplier effect","Current account","Exchange rate","Keynesian economics","Supply-side policy","LRAS curve","Output gap","Stagflation","Crowding out","Balance of payments","Cost-push inflation","Demand-pull inflation","Recession","Aggregate demand","Aggregate supply","Monetary policy"],
+    "International & Development":["Comparative advantage","Absolute advantage","Terms of trade","Trade deficit","Protectionism","Import tariff","Floating exchange rate","Trade liberalisation","Purchasing power parity","Bretton Woods","Trade bloc","World Trade Organization","Foreign direct investment","Human Development Index"]
   }},
   "Psychology":{icon:"psych",topics:{
-    "Approaches":["Behaviourism","Social learning theory","Cognitive approach","Biological approach","Psychodynamic theory","Operant conditioning","Classical conditioning","Schema theory","Attribution theory","Cognitive dissonance","Locus of control","Self-efficacy"],
-    "Research Methods":["Randomised control trial","Longitudinal study","Case study","Demand characteristics","Ecological validity","Reliability","Replication","Double-blind study","Triangulation","Informed consent","Debrief","Confounding variable","Standardisation","Inter-rater reliability"],
-    "Topics":["Memory model","Flashbulb memory","Cognitive bias","Confirmation bias","Fundamental attribution error","Bystander effect","Obedience","Conformity","Social facilitation","Deindividuation","Groupthink","Stereotype threat"]
+    "Biological":["Neurotransmitter","Synapse","Neuroplasticity","Hormone","Pheromone","Localisation of function","Lateralisation","Neural pruning","Genetic predisposition","Twin studies","MRI","Biological approach","Endocrine system","Amygdala"],
+    "Cognitive":["Schema theory","Memory model","Flashbulb memory","Cognitive bias","Confirmation bias","Reconstructive memory","Misinformation effect","Priming","Heuristic","Availability heuristic","Dual processing","Cognitive dissonance","Thinking fast and slow"],
+    "Sociocultural":["Social identity theory","Social learning theory","Fundamental attribution error","Bystander effect","Obedience","Conformity","Social facilitation","Deindividuation","Groupthink","Stereotype threat","Minority influence","Prosocial behaviour","Attribution theory","In-group bias","Culture dimensions"],
+    "Research Methods":["Randomised control trial","Longitudinal study","Case study","Demand characteristics","Ecological validity","Reliability","Replication","Double-blind study","Triangulation","Informed consent","Confounding variable","Standardisation","Inter-rater reliability","Independent variable","Dependent variable","Naturalistic observation","Thematic analysis","Pilot study"]
   }},
   "English Lit":{icon:"eng",topics:{
-    "Literary Terms":["Metaphor","Allegory","Dramatic irony","Foreshadowing","Denouement","Soliloquy","Pathetic fallacy","Bildungsroman","Epistolary novel","Unreliable narrator","Hamartia","Anagnorisis","Catharsis","In medias res","Ekphrasis"],
-    "Movements":["Modernism","Postmodernism","Romanticism","Naturalism","Magical realism","Stream of consciousness","Gothic literature","Victorian realism","Existentialism","Surrealism","Absurdism","Symbolism","Decadence"],
-    "Narrative":["Omniscient narrator","Free indirect discourse","Frame narrative","Prolepsis","Analepsis","Diegetic","Metafiction","Polyphony","Defamiliarisation","Close reading"]
+    "Literary Devices":["Metaphor","Simile","Allegory","Dramatic irony","Foreshadowing","Soliloquy","Pathetic fallacy","Oxymoron","Synecdoche","Metonymy","Motif","Tone","Diction","Imagery","Allusion","Paradox","Juxtaposition","Anaphora","Personification","Hyperbole","Onomatopoeia"],
+    "Form & Structure":["Bildungsroman","Epistolary novel","Denouement","Hamartia","Anagnorisis","Catharsis","In medias res","Ekphrasis","Iambic pentameter","Enjambment","Caesura","Tragic hero","Deus ex machina","Sonnet","Blank verse","Free verse"],
+    "Movements":["Modernism","Postmodernism","Romanticism","Naturalism","Magical realism","Stream of consciousness","Gothic literature","Victorian realism","Existentialism","Surrealism","Absurdism","Symbolism","Harlem Renaissance","Beat Generation"],
+    "Narrative":["Omniscient narrator","Unreliable narrator","Free indirect discourse","Frame narrative","Prolepsis","Analepsis","Diegetic","Metafiction","Polyphony","Defamiliarisation","Close reading","Interior monologue","Second-person narration"]
   }}
 };
 
