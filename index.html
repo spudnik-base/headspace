@@ -452,6 +452,44 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 .perm-title { font-family:var(--font-bang); font-size:36px; letter-spacing:3px; color:var(--ink); }
 .perm-desc { font-size:14px; color:var(--ink); opacity:0.6; text-align:center; max-width:320px; line-height:1.6; font-weight:500; }
 
+/* ── CARD FLIP (advance animation) ── */
+.term-card-wrap { perspective: 1000px; }
+.term-card-manga.card-flip { animation: cardFlip 0.32s cubic-bezier(.4,.0,.2,1); backface-visibility: hidden; }
+@keyframes cardFlip {
+  0%   { transform: rotateY(0deg);    box-shadow: 6px 6px 0 var(--ink); }
+  45%  { transform: rotateY(90deg);   box-shadow: 2px 6px 0 var(--ink); }
+  55%  { transform: rotateY(-90deg);  box-shadow: 2px 6px 0 var(--ink); }
+  100% { transform: rotateY(0deg);    box-shadow: 6px 6px 0 var(--ink); }
+}
+
+/* ── PIN SCREEN ── */
+#screen-pin { background: var(--paper); border: var(--b4); flex-direction: column; background-image: var(--dots-sm); }
+.pin-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 20px; gap: 10px; }
+.pin-subtitle { font-size: 12px; font-weight: 700; color: var(--ink); opacity: 0.5; letter-spacing: 2px; text-transform: uppercase; }
+.pin-display {
+  font-family: var(--font-bang); font-size: 44px; letter-spacing: 14px;
+  color: var(--ink); background: var(--white); border: var(--b3);
+  padding: 4px 24px 4px 38px; min-width: 180px; text-align: center;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.pin-display.shake { animation: pinShake 0.35s ease; }
+@keyframes pinShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 56px); gap: 6px; }
+.pin-key {
+  font-family: var(--font-bang); font-size: 22px; letter-spacing: 1px;
+  background: var(--panel); border: var(--b2); padding: 8px 0;
+  cursor: pointer; transition: transform 0.08s, background 0.1s;
+  color: var(--ink);
+}
+.pin-key:hover { background: var(--paper2); }
+.pin-key:active { transform: scale(0.94); background: var(--yellow); }
+.pin-key.wide { grid-column: span 1; }
+.pin-key.action { background: var(--ink); color: var(--yellow); font-size: 14px; letter-spacing: 2px; }
+.pin-key.action:hover { background: #222; }
+.pin-hint { font-size: 12px; color: var(--red); font-weight: 700; min-height: 16px; letter-spacing: 0.5px; }
+.pin-reset { background: none; border: none; font-size: 11px; color: var(--ink); opacity: 0.5; cursor: pointer; text-decoration: underline; font-weight: 600; letter-spacing: 1px; }
+.pin-reset:hover { opacity: 0.9; }
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{ width:5px; }
 ::-webkit-scrollbar-track{ background:transparent; }
@@ -490,7 +528,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
       <div class="speech-title">PICK YOUR SUBJECT</div>
       <div class="speech-body">Tap a subject below, then hit Start. Hold phone to forehead, screen out. Your team guesses the term.</div>
     </div>
-    <button class="home-teacher-btn" onclick="showScreen('screen-teacher')">
+    <button class="home-teacher-btn" onclick="openTeacher()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
       TEACHER MODE
     </button>
@@ -615,6 +653,34 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
         <div class="zone-label-sub">or tap this zone</div>
       </div>
     </button>
+  </div>
+</div>
+
+<!-- ══ SCREEN: PIN ══ -->
+<div class="screen" id="screen-pin">
+  <div class="screen-topbar">
+    <button class="back-btn" onclick="showScreen('screen-home')">← BACK</button>
+    <div class="topbar-title" id="pin-title">ENTER TEACHER PIN</div>
+  </div>
+  <div class="pin-body">
+    <div class="pin-subtitle" id="pin-subtitle">4 digits</div>
+    <div class="pin-display" id="pin-display">●●●●</div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="pinTap(1)">1</button>
+      <button class="pin-key" onclick="pinTap(2)">2</button>
+      <button class="pin-key" onclick="pinTap(3)">3</button>
+      <button class="pin-key" onclick="pinTap(4)">4</button>
+      <button class="pin-key" onclick="pinTap(5)">5</button>
+      <button class="pin-key" onclick="pinTap(6)">6</button>
+      <button class="pin-key" onclick="pinTap(7)">7</button>
+      <button class="pin-key" onclick="pinTap(8)">8</button>
+      <button class="pin-key" onclick="pinTap(9)">9</button>
+      <button class="pin-key action" onclick="pinClear()">CLR</button>
+      <button class="pin-key" onclick="pinTap(0)">0</button>
+      <button class="pin-key action" onclick="pinBackspace()">◂</button>
+    </div>
+    <div class="pin-hint" id="pin-hint"></div>
+    <button class="pin-reset" onclick="resetTeacherPin()">FORGOT PIN?</button>
   </div>
 </div>
 
@@ -795,7 +861,9 @@ const S = {
   deck: [], idx: 0, score: {correct:[], passed:[]},
   timeLeft: 60, timerID: null, tiltEnabled: false,
   customTerms: [], tiltCooldown: 0,
-  summaryTab: 'passed'
+  summaryTab: 'passed',
+  calib: { samples: [], restBeta: 90, thCorrect: 130, thPass: 50, listener: null },
+  pin: { mode: 'enter', input: '', first: null }
 };
 
 // ══ AUDIO (Web Audio API) ══
@@ -959,6 +1027,11 @@ function startWithoutTilt(){ S.tiltEnabled=false; beginCountdown(); }
 function beginCountdown(){
   showScreen('screen-countdown');
   document.getElementById('cdown-mode').textContent=S.tiltEnabled?'TILT CONTROLS ACTIVE':'USING ON-SCREEN ZONES';
+  S.calib.samples=[];
+  if(S.tiltEnabled){
+    S.calib.listener=(e)=>{ if(typeof e.beta==='number') S.calib.samples.push(e.beta); };
+    window.addEventListener('deviceorientation',S.calib.listener);
+  }
   let n=3;
   const el=document.getElementById('cdown-num');
   el.textContent=n;
@@ -969,21 +1042,48 @@ function beginCountdown(){
   },1000);
 }
 
+function finalizeCalibration(){
+  if(S.calib.listener){
+    window.removeEventListener('deviceorientation',S.calib.listener);
+    S.calib.listener=null;
+  }
+  const samples=S.calib.samples;
+  if(samples.length>=6){
+    const sorted=[...samples].sort((a,b)=>a-b);
+    const mid=sorted.slice(Math.floor(sorted.length*0.2), Math.ceil(sorted.length*0.8));
+    const rest=mid.reduce((a,b)=>a+b,0)/mid.length;
+    S.calib.restBeta=rest;
+    S.calib.thCorrect=rest+40;
+    S.calib.thPass=rest-40;
+  } else {
+    S.calib.restBeta=90; S.calib.thCorrect=130; S.calib.thPass=50;
+  }
+}
+
 function launchGame(){
   S.idx=0; S.score={correct:[],passed:[]}; S.timeLeft=S.duration;
+  finalizeCalibration();
   drawSpeedLines();
   showScreen('screen-game');
-  renderCard();
+  renderCard(true);
   startTimer();
   if(S.tiltEnabled) window.addEventListener('deviceorientation',onTilt);
 }
 
-function renderCard(){
+function renderCard(skipFlip){
   if(S.idx>=S.deck.length){ endGame(); return; }
-  const c=S.deck[S.idx];
-  document.getElementById('term-word').textContent=c.term;
-  document.getElementById('term-cat').textContent=c.category.toUpperCase();
-  document.getElementById('term-num').textContent=`${S.idx+1} / ${S.deck.length}`;
+  const card=document.getElementById('term-card');
+  const apply=()=>{
+    const c=S.deck[S.idx];
+    document.getElementById('term-word').textContent=c.term;
+    document.getElementById('term-cat').textContent=c.category.toUpperCase();
+    document.getElementById('term-num').textContent=`${S.idx+1} / ${S.deck.length}`;
+  };
+  if(skipFlip){ apply(); return; }
+  card.classList.remove('card-flip'); void card.offsetWidth;
+  card.classList.add('card-flip');
+  setTimeout(apply,150);
+  setTimeout(()=>card.classList.remove('card-flip'),330);
 }
 
 const FX_C=['NICE!','YES!!','NAILED','BOOM!','ACE!!'];
@@ -1022,9 +1122,9 @@ function registerPass(){
 
 function onTilt(e){
   const beta=e.beta, now=Date.now();
-  if(now-S.tiltCooldown<1400||beta===null) return;
-  if(beta>118){ S.tiltCooldown=now; registerCorrect(); }
-  else if(beta<18){ S.tiltCooldown=now; registerPass(); }
+  if(now-S.tiltCooldown<1400||typeof beta!=='number') return;
+  if(beta>S.calib.thCorrect){ S.tiltCooldown=now; registerCorrect(); }
+  else if(beta<S.calib.thPass){ S.tiltCooldown=now; registerPass(); }
 }
 
 function startTimer(){
@@ -1121,6 +1221,65 @@ async function fetchDefs(){
 function playAgain(){
   showScreen('screen-home'); S.subject='Biology';
   initHome();
+}
+
+// ══ TEACHER PIN ══
+const PIN_KEY='hs.teacherPin';
+function openTeacher(){
+  const saved=localStorage.getItem(PIN_KEY);
+  S.pin.mode = saved ? 'enter' : 'create';
+  S.pin.input=''; S.pin.first=null;
+  setPinTitle(S.pin.mode==='enter'?'ENTER TEACHER PIN':'CREATE TEACHER PIN');
+  setPinHint('');
+  updatePinDisplay();
+  showScreen('screen-pin');
+}
+function setPinTitle(t){ document.getElementById('pin-title').textContent=t; }
+function setPinHint(t){ document.getElementById('pin-hint').textContent=t; }
+function updatePinDisplay(){
+  const len=S.pin.input.length;
+  document.getElementById('pin-display').textContent='●●●●'.split('').map((_,i)=>i<len?S.pin.input[i]:'●').join('');
+}
+function pinTap(d){
+  if(S.pin.input.length>=4) return;
+  S.pin.input+=String(d);
+  updatePinDisplay();
+  if(S.pin.input.length===4) setTimeout(pinSubmit,160);
+}
+function pinClear(){ S.pin.input=''; updatePinDisplay(); setPinHint(''); }
+function pinBackspace(){ S.pin.input=S.pin.input.slice(0,-1); updatePinDisplay(); setPinHint(''); }
+function pinShake(){
+  const d=document.getElementById('pin-display');
+  d.classList.remove('shake'); void d.offsetWidth; d.classList.add('shake');
+}
+function pinSubmit(){
+  const saved=localStorage.getItem(PIN_KEY);
+  if(S.pin.mode==='enter'){
+    if(S.pin.input===saved){ setPinHint(''); showScreen('screen-teacher'); }
+    else { setPinHint('Wrong PIN. Try again.'); pinShake(); S.pin.input=''; updatePinDisplay(); }
+    return;
+  }
+  if(!S.pin.first){
+    S.pin.first=S.pin.input; S.pin.input='';
+    setPinTitle('CONFIRM PIN'); setPinHint('Type the same PIN again.');
+    updatePinDisplay();
+  } else {
+    if(S.pin.input===S.pin.first){
+      localStorage.setItem(PIN_KEY,S.pin.input);
+      setPinHint(''); showScreen('screen-teacher');
+    } else {
+      setPinHint('PINs did not match. Start over.');
+      pinShake();
+      S.pin.first=null; S.pin.input='';
+      setPinTitle('CREATE TEACHER PIN');
+      updatePinDisplay();
+    }
+  }
+}
+function resetTeacherPin(){
+  if(!confirm('Reset teacher PIN? You will set a new one.')) return;
+  localStorage.removeItem(PIN_KEY);
+  openTeacher();
 }
 
 // ══ INIT ══
