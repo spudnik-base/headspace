@@ -677,10 +677,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   font: 600 10px/1.35 ui-monospace, Menlo, Consolas, monospace;
   padding: 5px 8px; border-radius: 4px; white-space: pre;
   border: 1px solid rgba(158,255,160,0.3);
+  touch-action: none; user-select: none;
 }
 #tilt-debug.on { display: block; }
 #tilt-debug::after {
-  content: 'tap to hide';
+  content: 'tap or flick away';
   display: block; margin-top: 3px;
   font-size: 9px; opacity: 0.7; letter-spacing: 0.5px;
 }
@@ -1562,11 +1563,46 @@ function debugLogoTap(){
   _debugTapTimer=setTimeout(()=>{_debugTaps=0;},1500);
   if(_debugTaps>=5){ _debugTaps=0; toggleDebug(); }
 }
-// Tap the debug overlay itself to dismiss it from any screen
-document.addEventListener('DOMContentLoaded',()=>{
+// Tap OR flick-away gesture on the debug overlay dismisses it
+(function(){
   const dbg=document.getElementById('tilt-debug');
-  if(dbg) dbg.addEventListener('click', toggleDebug);
-});
+  if(!dbg) return;
+  let startX=0, startY=0, moved=false, active=false;
+  dbg.addEventListener('pointerdown',(e)=>{
+    active=true; moved=false;
+    startX=e.clientX; startY=e.clientY;
+    dbg.style.transition='none';
+    try{ dbg.setPointerCapture(e.pointerId); }catch{}
+  });
+  dbg.addEventListener('pointermove',(e)=>{
+    if(!active) return;
+    const dx=e.clientX-startX, dy=e.clientY-startY;
+    if(Math.hypot(dx,dy)>6) moved=true;
+    dbg.style.transform='translate('+dx+'px,'+dy+'px)';
+  });
+  dbg.addEventListener('pointerup',(e)=>{
+    if(!active) return;
+    active=false;
+    const dx=e.clientX-startX, dy=e.clientY-startY;
+    const dist=Math.hypot(dx,dy);
+    dbg.style.transition='transform 0.22s ease-out';
+    if(dist>40){
+      // Flick off screen, then toggle off
+      const ang=Math.atan2(dy,dx);
+      dbg.style.transform='translate('+(Math.cos(ang)*600)+'px,'+(Math.sin(ang)*600)+'px)';
+      setTimeout(()=>{
+        dbg.style.transform=''; dbg.style.transition='';
+        if(DEBUG) toggleDebug();
+      },220);
+    } else if(!moved){
+      dbg.style.transform=''; dbg.style.transition='';
+      toggleDebug();
+    } else {
+      dbg.style.transform='';
+    }
+  });
+  dbg.addEventListener('pointercancel',()=>{ active=false; dbg.style.transform=''; dbg.style.transition=''; });
+})();
 function updateTiltDebug(e){
   const dbg=document.getElementById('tilt-debug');
   if(!dbg) return;
