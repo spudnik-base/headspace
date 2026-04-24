@@ -91,6 +91,25 @@ body.theme-pastel {
   --dots-yel: radial-gradient(circle, rgba(248,223,160,0.42) 1.5px, transparent 1.5px) 0 0 / 8px 8px;
 }
 
+body.theme-teal {
+  --ink: #003D3E;
+  --paper: #00D8D8;
+  --paper2: #03C0C1;
+  --panel: #A8EFEF;
+  --red: #FF6B6B;
+  --red-dim: rgba(255,107,107,0.16);
+  --yellow: #FFE066;
+  --yellow-dim: rgba(255,224,102,0.24);
+  --blue-ink: #007F80;
+  --white: #EFFDFD;
+  --warn: #FF9F43;
+  --info: #009C9D;
+  --dots-sm: radial-gradient(circle, rgba(0,61,62,0.18) 1px, transparent 1px) 0 0 / 6px 6px;
+  --dots-lg: radial-gradient(circle, rgba(0,61,62,0.12) 1.5px, transparent 1.5px) 0 0 / 10px 10px;
+  --dots-red: radial-gradient(circle, rgba(255,107,107,0.26) 1px, transparent 1px) 0 0 / 7px 7px;
+  --dots-yel: radial-gradient(circle, rgba(255,224,102,0.4) 1.5px, transparent 1.5px) 0 0 / 8px 8px;
+}
+
 *{ box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink); font-family: var(--font-body); }
 
@@ -735,6 +754,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <div class="theme-toggle" role="radiogroup" aria-label="Theme">
       <button class="theme-opt active" data-theme="ink" onclick="setTheme('ink')">INK</button>
       <button class="theme-opt" data-theme="pastel" onclick="setTheme('pastel')">LILAC</button>
+      <button class="theme-opt" data-theme="teal" onclick="setTheme('teal')">TEAL</button>
     </div>
   </div>
   <div class="home-right">
@@ -1652,10 +1672,11 @@ function playAgain(){
 
 // ══ THEME ══
 const THEME_KEY='hs.theme';
-const META_THEME={ ink:'#0A0A0A', pastel:'#E7D1FF' };
+const META_THEME={ ink:'#0A0A0A', pastel:'#E7D1FF', teal:'#00D8D8' };
 function setTheme(name){
-  if(name!=='pastel') name='ink';
+  if(!(name in META_THEME)) name='ink';
   document.body.classList.toggle('theme-pastel', name==='pastel');
+  document.body.classList.toggle('theme-teal', name==='teal');
   document.querySelectorAll('.theme-opt').forEach(b=>b.classList.toggle('active', b.dataset.theme===name));
   const meta=document.querySelector('meta[name="theme-color"]');
   if(meta) meta.setAttribute('content', META_THEME[name]);
