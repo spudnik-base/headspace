@@ -1129,6 +1129,7 @@ const S = {
   timeLeft: 60, timerID: null, tiltEnabled: false,
   customTerms: [], tiltCooldown: 0,
   summaryTab: 'passed',
+  defs: {}, defsState: 'idle',
   calib: { samples: [], rest: 0, thCorrect: 40, thPass: -40, listener: null, axis: 'beta', axisSign: 1 },
   pin: { mode: 'enter', input: '', first: null }
 };
@@ -1389,7 +1390,7 @@ function buildDeck(){
   return shuffle(terms);
 }
 function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
-function startGame(){ S.deck=buildDeck(); checkTiltPermission(); }
+function startGame(){ S.deck=buildDeck(); S.defs={}; S.defsState='idle'; warmDefsEndpoint(); checkTiltPermission(); }
 function checkTiltPermission(){
   if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function'){
     showScreen('screen-permission');
@@ -1570,6 +1571,7 @@ function endGame(){
   document.getElementById('sum-rank').textContent=rank;
   document.getElementById('sum-rank-sub').textContent=subs[rank];
   S.summaryTab='passed';
+  if(passed.length||correct.length) S.defsState='loading';
   renderSummaryTab();
   showScreen('screen-summary');
   if(passed.length||correct.length) fetchDefs();
@@ -1587,11 +1589,19 @@ function renderSummaryTab(){
   list.innerHTML='';
   const items=S.summaryTab==='passed'?S.score.passed:S.score.correct;
   if(!items.length){ list.innerHTML='<div class="empty-msg">Nothing here yet.</div>'; return; }
+  const loading = S.defsState==='loading';
   items.forEach(item=>{
     const card=document.createElement('div');
     card.className='sum-card '+(S.summaryTab==='passed'?'passed':'correct');
     card.dataset.term=item.term;
-    card.innerHTML=`<div class="sum-term">${item.term}</div><div class="sum-def loading"></div><div class="sum-def loading2"></div>`;
+    const cached=S.defs[item.term];
+    if(cached){
+      card.innerHTML=`<div class="sum-term">${item.term}</div><div class="sum-def">${cached}</div>`;
+    } else if(loading){
+      card.innerHTML=`<div class="sum-term">${item.term}</div><div class="sum-def loading"></div><div class="sum-def loading2"></div>`;
+    } else {
+      card.innerHTML=`<div class="sum-term">${item.term}</div><div class="sum-def">Check your notes for this one.</div>`;
+    }
     list.appendChild(card);
   });
 }
@@ -1616,37 +1626,26 @@ function setDefsStatus(mode,msg){
 }
 
 function applyDefs(defs){
-  defs.forEach(d=>{
-    document.querySelectorAll('.sum-card').forEach(card=>{
-      const termEl=card.querySelector('.sum-term');
-      if(termEl&&termEl.textContent===d.term){
-        card.querySelectorAll('.sum-def').forEach(el=>el.remove());
-        const def=document.createElement('div');
-        def.className='sum-def'; def.textContent=d.definition;
-        card.appendChild(def);
-      }
-    });
-  });
+  defs.forEach(d=>{ if(d && d.term) S.defs[d.term]=d.definition; });
+  renderSummaryTab();
+}
+
+function warmDefsEndpoint(){
+  try{ fetch('api/define',{method:'GET',cache:'no-store'}).catch(()=>{}); }catch(e){}
 }
 
 async function fetchDefs(){
-  const allItems=[...S.score.passed,...S.score.correct.slice(0,4)];
-  if(!allItems.length){ setDefsStatus('hide'); return; }
-  const terms=allItems.map(i=>({term:i.term,subject:i.subject}));
+  const allItems=[...S.score.passed,...S.score.correct];
+  const pending=allItems.filter(i=>!S.defs[i.term]);
+  if(!pending.length){ S.defsState='done'; setDefsStatus('hide'); renderSummaryTab(); return; }
+  const terms=pending.map(i=>({term:i.term,subject:i.subject}));
 
-  // restore loading shimmer on any cards that lost it (retry path)
-  document.querySelectorAll('.sum-card').forEach(card=>{
-    if(!card.querySelector('.sum-def')) return;
-    const hasReal=[...card.querySelectorAll('.sum-def')].some(el=>!el.classList.contains('loading')&&!el.classList.contains('loading2'));
-    if(hasReal) return;
-    card.querySelectorAll('.sum-def').forEach(el=>el.remove());
-    card.insertAdjacentHTML('beforeend','<div class="sum-def loading"></div><div class="sum-def loading2"></div>');
-  });
-
-  setDefsStatus('loading','Loading definitions…');
+  S.defsState='loading';
+  renderSummaryTab();
+  setDefsStatus('loading',`Loading ${pending.length} definition${pending.length===1?'':'s'}…`);
 
   const ctrl=new AbortController();
-  const timeoutID=setTimeout(()=>ctrl.abort('timeout'),12000);
+  const timeoutID=setTimeout(()=>ctrl.abort('timeout'),15000);
 
   try{
     const res=await fetch('api/define',{
@@ -1658,18 +1657,19 @@ async function fetchDefs(){
     clearTimeout(timeoutID);
     if(!res.ok) throw new Error('proxy '+res.status);
     const {defs}=await res.json();
-    if(!Array.isArray(defs)||!defs.length) throw new Error('empty');
+    if(!Array.isArray(defs)) throw new Error('not_array');
     applyDefs(defs);
-    document.querySelectorAll('.sum-def.loading, .sum-def.loading2').forEach(el=>{
-      el.className='sum-def'; el.textContent='Check your notes for this one.';
-    });
+    // anything still unfetched gets a fallback so shimmer never persists
+    pending.forEach(i=>{ if(!S.defs[i.term]) S.defs[i.term]='Check your notes for this one.'; });
+    S.defsState='done';
+    renderSummaryTab();
     setDefsStatus('hide');
   }catch(e){
     clearTimeout(timeoutID);
     console.error('fetchDefs failed:', e);
-    document.querySelectorAll('.sum-def.loading, .sum-def.loading2').forEach(el=>{
-      el.className='sum-def'; el.textContent='Check your notes for this one.';
-    });
+    // leave cache untouched so RETRY can re-fetch pending items
+    S.defsState='error';
+    renderSummaryTab();
     const isTimeout=e && (e.name==='AbortError' || String(e).includes('timeout'));
     setDefsStatus('err', isTimeout?'Definitions timed out.':'Couldn’t load definitions.');
   }
@@ -1677,6 +1677,7 @@ async function fetchDefs(){
 
 function playAgain(){
   setDefsStatus('hide');
+  S.defs={}; S.defsState='idle';
   showScreen('screen-home'); S.subject='Biology';
   initHome();
 }
