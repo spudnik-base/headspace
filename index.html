@@ -92,22 +92,22 @@ body.theme-pastel {
 }
 
 body.theme-teal {
-  --ink: #00402C;
-  --paper: #8BF0C2;
-  --paper2: #61E0AE;
-  --panel: #DCF8DE;
-  --red: #FF6B6B;
-  --red-dim: rgba(255,107,107,0.16);
-  --yellow: #FFE066;
-  --yellow-dim: rgba(255,224,102,0.24);
-  --blue-ink: #24A67C;
-  --white: #F5FDF5;
-  --warn: #FF9F43;
-  --info: #34CB9A;
-  --dots-sm: radial-gradient(circle, rgba(0,64,44,0.14) 1px, transparent 1px) 0 0 / 6px 6px;
-  --dots-lg: radial-gradient(circle, rgba(0,64,44,0.10) 1.5px, transparent 1.5px) 0 0 / 10px 10px;
-  --dots-red: radial-gradient(circle, rgba(255,107,107,0.22) 1px, transparent 1px) 0 0 / 7px 7px;
-  --dots-yel: radial-gradient(circle, rgba(255,224,102,0.36) 1.5px, transparent 1.5px) 0 0 / 8px 8px;
+  --ink: #234A35;
+  --paper: #CDEAD7;
+  --paper2: #B5DEC2;
+  --panel: #E4F3EA;
+  --red: #E89595;
+  --red-dim: rgba(232,149,149,0.18);
+  --yellow: #F5DE99;
+  --yellow-dim: rgba(245,222,153,0.28);
+  --blue-ink: #6BA58C;
+  --white: #F6FBF7;
+  --warn: #E8B876;
+  --info: #95C4A8;
+  --dots-sm: radial-gradient(circle, rgba(35,74,53,0.14) 1px, transparent 1px) 0 0 / 6px 6px;
+  --dots-lg: radial-gradient(circle, rgba(35,74,53,0.09) 1.5px, transparent 1.5px) 0 0 / 10px 10px;
+  --dots-red: radial-gradient(circle, rgba(232,149,149,0.26) 1px, transparent 1px) 0 0 / 7px 7px;
+  --dots-yel: radial-gradient(circle, rgba(245,222,153,0.42) 1.5px, transparent 1.5px) 0 0 / 8px 8px;
 }
 
 *{ box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -1984,7 +1984,7 @@ function playAgain(){
 
 // ══ THEME ══
 const THEME_KEY='hs.theme';
-const META_THEME={ ink:'#0A0A0A', pastel:'#E7D1FF', teal:'#8BF0C2' };
+const META_THEME={ ink:'#0A0A0A', pastel:'#E7D1FF', teal:'#CDEAD7' };
 function setTheme(name){
   if(!(name in META_THEME)) name='ink';
   document.body.classList.toggle('theme-pastel', name==='pastel');
