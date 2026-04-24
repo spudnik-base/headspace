@@ -1392,10 +1392,10 @@ function finalizeCalibration(){
     const mid=sorted.slice(Math.floor(sorted.length*0.2), Math.ceil(sorted.length*0.8));
     const rest=mid.reduce((a,b)=>a+b,0)/mid.length;
     S.calib.rest=rest;
-    S.calib.thCorrect=rest+40;
-    S.calib.thPass=rest-40;
+    S.calib.thCorrect=rest+25;
+    S.calib.thPass=rest-25;
   } else {
-    S.calib.rest=0; S.calib.thCorrect=40; S.calib.thPass=-40;
+    S.calib.rest=0; S.calib.thCorrect=25; S.calib.thPass=-25;
   }
 }
 
