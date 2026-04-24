@@ -655,6 +655,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 ::-webkit-scrollbar-track{ background:transparent; }
 ::-webkit-scrollbar-thumb{ background:rgba(0,0,0,0.25); }
 
+/* ── TILT DEBUG OVERLAY (only when ?debug=1 is in URL) ── */
+#tilt-debug {
+  display: none; position: fixed; top: 6px; left: 6px;
+  z-index: 10000; pointer-events: none;
+  background: rgba(0,0,0,0.82); color: #9effa0;
+  font: 600 10px/1.35 ui-monospace, Menlo, Consolas, monospace;
+  padding: 5px 8px; border-radius: 4px; white-space: pre;
+  border: 1px solid rgba(158,255,160,0.3);
+}
+#tilt-debug.on { display: block; }
+
 /* ── MODAL ── */
 .modal-overlay {
   display: none; position: fixed; inset: 0; z-index: 9998;
@@ -1052,6 +1063,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
     <div class="summary-list" id="summary-list"></div>
   </div>
 </div>
+
+<!-- ══ DEBUG: TILT ══ -->
+<div id="tilt-debug" aria-hidden="true"></div>
 
 <!-- ══ MODAL: EXIT CONFIRM ══ -->
 <div class="modal-overlay" id="exit-modal" aria-hidden="true" onclick="if(event.target===this)closeExitModal()">
@@ -1482,6 +1496,27 @@ function requestPermission(){
 }
 function startWithoutTilt(){ S.tiltEnabled=false; beginCountdown(); }
 
+const DEBUG = new URLSearchParams(location.search).has('debug');
+function updateTiltDebug(e){
+  const dbg=document.getElementById('tilt-debug');
+  if(!dbg) return;
+  dbg.classList.add('on');
+  const {axis,axisSign,rest,thCorrect,thPass}=S.calib;
+  const raw=e && typeof e[axis]==='number' ? e[axis] : NaN;
+  const v=isNaN(raw) ? NaN : raw*axisSign - rest;
+  const angle=(screen.orientation && typeof screen.orientation.angle==='number')
+    ? screen.orientation.angle
+    : (typeof window.orientation==='number' ? window.orientation : '?');
+  const calibrating = S.calib.listener ? 'CALIBRATING' : 'live';
+  dbg.textContent =
+    'angle:' + angle + '  axis:' + axis + '  sign:' + axisSign + '\n' +
+    'raw:' + (isNaN(raw)?'--':raw.toFixed(1)) + '  rest:' + rest.toFixed(1) + '\n' +
+    'v:' + (isNaN(v)?'--':v.toFixed(1)) + '  th:[' + (thPass-rest).toFixed(0) + '..' + (thCorrect-rest).toFixed(0) + ']\n' +
+    'motion:' + S.tiltMotion + '  ' + calibrating + '\n' +
+    'β:' + (e && typeof e.beta==='number'?e.beta.toFixed(1):'--') +
+    '  γ:' + (e && typeof e.gamma==='number'?e.gamma.toFixed(1):'--');
+}
+
 function detectTiltAxis(){
   const raw = (screen.orientation && typeof screen.orientation.angle === 'number')
     ? screen.orientation.angle
@@ -1500,7 +1535,11 @@ function beginCountdown(){
   S.calib.axis = axis;
   S.calib.axisSign = sign;
   if(S.tiltEnabled){
-    S.calib.listener=(e)=>{ const v=e[axis]; if(typeof v==='number') S.calib.samples.push(v*sign); };
+    S.calib.listener=(e)=>{
+      const v=e[axis];
+      if(typeof v==='number') S.calib.samples.push(v*sign);
+      if(DEBUG) updateTiltDebug(e);
+    };
     window.addEventListener('deviceorientation',S.calib.listener);
   }
   let n=3;
@@ -1528,26 +1567,37 @@ function finalizeCalibration(){
     S.calib.listener=null;
   }
   const samples=S.calib.samples;
+  let rest=0;
   if(samples.length>=6){
     const sorted=[...samples].sort((a,b)=>a-b);
     const mid=sorted.slice(Math.floor(sorted.length*0.2), Math.ceil(sorted.length*0.8));
-    const rest=mid.reduce((a,b)=>a+b,0)/mid.length;
-    S.calib.rest=rest;
-    S.calib.thCorrect=rest+28;
-    S.calib.thPass=rest-28;
-  } else {
-    S.calib.rest=0; S.calib.thCorrect=28; S.calib.thPass=-28;
+    rest=mid.reduce((a,b)=>a+b,0)/mid.length;
+  } else if(samples.length>0){
+    // Few samples: use the median, which tracks current orientation better
+    // than a fixed default of 0.
+    const sorted=[...samples].sort((a,b)=>a-b);
+    rest=sorted[Math.floor(sorted.length/2)];
   }
+  S.calib.rest=rest;
+  S.calib.thCorrect=rest+28;
+  S.calib.thPass=rest-28;
 }
 
 function launchGame(){
   S.idx=0; S.score={correct:[],passed:[]}; S.timeLeft=S.duration; S.tiltMotion=0;
-  finalizeCalibration();
   drawSpeedLines();
   showScreen('screen-game');
   renderCard(true);
   startTimer();
-  if(S.tiltEnabled) window.addEventListener('deviceorientation',onTilt);
+  if(S.tiltEnabled){
+    window.addEventListener('deviceorientation',onTilt);
+    // Keep the calibration sampler running 800ms into gameplay so samples
+    // include the phone settling against the forehead. onTilt refuses to
+    // fire while S.calib.listener is still attached.
+    setTimeout(finalizeCalibration,800);
+  } else {
+    finalizeCalibration();
+  }
 }
 
 function renderCard(skipFlip){
@@ -1611,6 +1661,9 @@ function registerPass(){
 function onTilt(e){
   const raw=e[S.calib.axis];
   if(typeof raw!=='number') return;
+  if(DEBUG) updateTiltDebug(e);
+  // Still warming up — calibration listener is still collecting samples
+  if(S.calib.listener) return;
   const v=raw*S.calib.axisSign-S.calib.rest;
   const DEAD=10;
 
