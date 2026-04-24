@@ -318,6 +318,19 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 .game-countdown.warn { color: var(--warn); }
 .game-countdown.danger { color: var(--red); animation: cdanger 0.5s ease-in-out infinite alternate; }
 @keyframes cdanger { from{ opacity:1 } to{ opacity:0.4 } }
+.game-swap-btn {
+  background: var(--ink); border: none; border-left: var(--b3);
+  height: 100%; padding: 0 12px; cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  color: var(--yellow); font-family: var(--font-bang);
+  font-size: 15px; letter-spacing: 2px; line-height: 1;
+  transition: filter 0.12s, transform 0.08s;
+}
+.game-swap-btn .swap-icon { font-family: var(--font-body); font-weight: 900; font-size: 16px; }
+.game-swap-btn:hover { filter: brightness(1.25); }
+.game-swap-btn:active { transform: scale(0.94); }
+.game-swap-btn.flipped { background: var(--yellow); color: var(--ink); }
+
 .game-exit-btn {
   background: var(--red); border: none; border-left: var(--b3);
   height: 100%; padding: 0 14px; cursor: pointer;
@@ -769,6 +782,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   .game-topbar { height: 40px; }
   .game-score-box { padding: 0 12px; font-size: 18px; }
   .game-countdown { font-size: 22px; padding: 0 12px; min-width: 58px; }
+  .game-swap-btn { padding: 0 9px; font-size: 13px; gap: 3px; }
+  .game-swap-btn .swap-icon { font-size: 14px; }
   .game-exit-btn { padding: 0 11px; font-size: 15px; gap: 4px; }
   .game-exit-btn .exit-x { font-size: 13px; }
   .game-zone { width: 120px; }
@@ -929,6 +944,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
       </div>
       <div class="game-countdown" id="hud-timer">60</div>
     </div>
+    <button class="game-swap-btn" onclick="invertTilt()" aria-label="Swap tilt directions" title="Swap tilt up/down">
+      <span class="swap-icon" aria-hidden="true">↕</span><span class="swap-lbl">SWAP</span>
+    </button>
     <button class="game-exit-btn" onclick="exitGame()" aria-label="Exit game" title="Exit game">
       <span class="exit-x" aria-hidden="true">✕</span><span class="exit-lbl">BAIL!</span>
     </button>
@@ -1533,14 +1551,35 @@ function updateTiltDebug(e){
     '  γ:' + (e && typeof e.gamma==='number'?e.gamma.toFixed(1):'--');
 }
 
+function invertTilt(){
+  const key='hs.tiltInvert';
+  const next = localStorage.getItem(key)==='1' ? '0' : '1';
+  localStorage.setItem(key, next);
+  // Flip the current session too: sign, rest, thresholds all negate
+  S.calib.axisSign *= -1;
+  S.calib.rest *= -1;
+  S.calib.thCorrect = S.calib.rest + 28;
+  S.calib.thPass = S.calib.rest - 28;
+  S.tiltMotion = 0;
+  const btn=document.querySelector('.game-swap-btn');
+  if(btn) btn.classList.toggle('flipped', next==='1');
+}
+
 function detectTiltAxis(){
   const raw = (screen.orientation && typeof screen.orientation.angle === 'number')
     ? screen.orientation.angle
     : (typeof window.orientation === 'number' ? window.orientation : 0);
   const a = ((raw % 360) + 360) % 360;
-  if(a === 90)  return {axis:'gamma', sign: 1};
-  if(a === 270) return {axis:'gamma', sign:-1};
-  return {axis:'beta', sign: 1};
+  // Angle 90 (Android landscape-primary): tilting phone forward (chin down,
+  // top of phone moves away from user) makes gamma swing POSITIVE. We want
+  // forward tilt = PASS = negative v, so sign is -1 for angle 90.
+  let sign;
+  if(a === 90) sign = -1;
+  else if(a === 270) sign = 1;
+  else return {axis:'beta', sign: 1};
+  // Persisted user override via SWAP button
+  if(localStorage.getItem('hs.tiltInvert')==='1') sign *= -1;
+  return {axis:'gamma', sign};
 }
 
 function beginCountdown(){
@@ -1550,14 +1589,10 @@ function beginCountdown(){
   const {axis, sign} = detectTiltAxis();
   S.calib.axis = axis;
   S.calib.axisSign = sign;
-  if(S.tiltEnabled){
-    S.calib.listener=(e)=>{
-      const v=e[axis];
-      if(typeof v==='number') S.calib.samples.push(v*sign);
-      if(DEBUG) updateTiltDebug(e);
-    };
-    window.addEventListener('deviceorientation',S.calib.listener);
-  }
+  // Intentionally do NOT start sampling here. Players are often still
+  // moving the phone into forehead position during the 3s countdown, so
+  // samples captured here pollute the rest value. We start sampling only
+  // once gameplay begins (see launchGame).
   let n=3;
   const el=document.getElementById('cdown-num');
   el.textContent=n;
@@ -1605,12 +1640,23 @@ function launchGame(){
   showScreen('screen-game');
   renderCard(true);
   startTimer();
+  const swapBtn=document.querySelector('.game-swap-btn');
+  if(swapBtn) swapBtn.classList.toggle('flipped', localStorage.getItem('hs.tiltInvert')==='1');
   if(S.tiltEnabled){
+    // Sample the first 1200ms of gameplay as calibration. The phone is
+    // now pressed against the forehead, so this captures the true rest
+    // orientation. onTilt reads S.calib.listener and refuses to fire
+    // any actions while sampling is in progress.
+    const axis=S.calib.axis, sign=S.calib.axisSign;
+    S.calib.samples=[];
+    S.calib.listener=(e)=>{
+      const v=e[axis];
+      if(typeof v==='number') S.calib.samples.push(v*sign);
+      if(DEBUG) updateTiltDebug(e);
+    };
+    window.addEventListener('deviceorientation',S.calib.listener);
     window.addEventListener('deviceorientation',onTilt);
-    // Keep the calibration sampler running 800ms into gameplay so samples
-    // include the phone settling against the forehead. onTilt refuses to
-    // fire while S.calib.listener is still attached.
-    setTimeout(finalizeCalibration,800);
+    setTimeout(finalizeCalibration,1200);
   } else {
     finalizeCalibration();
   }
