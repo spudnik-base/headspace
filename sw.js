@@ -1,4 +1,4 @@
-const VERSION = 'headspace-v3';
+const VERSION = 'headspace-v4';
 const CORE = [
   './',
   './index.html',
