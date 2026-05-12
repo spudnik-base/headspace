@@ -361,12 +361,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   gap: 10px; cursor: pointer; border: none; background: none;
   transition: background 0.08s; position: relative; overflow: hidden;
 }
-.game-zone-left { border-right: var(--b3); background: var(--yellow-dim); }
-.game-zone-right { border-left: var(--b3); background: var(--red-dim); }
-.game-zone-left:hover { background: rgba(245,200,0,0.22); }
-.game-zone-right:hover { background: rgba(200,0,26,0.14); }
-.game-zone-left:active { background: rgba(245,200,0,0.4); }
-.game-zone-right:active { background: rgba(200,0,26,0.25); }
+.game-zone-left { border-right: var(--b3); background: var(--red-dim); }
+.game-zone-right { border-left: var(--b3); background: var(--yellow-dim); }
+.game-zone-left:hover { background: rgba(200,0,26,0.14); }
+.game-zone-right:hover { background: rgba(245,200,0,0.22); }
+.game-zone-left:active { background: rgba(200,0,26,0.25); }
+.game-zone-right:active { background: rgba(245,200,0,0.4); }
 
 .zone-dots-y { position: absolute; inset: 0; background: var(--dots-yel); opacity: 0.6; pointer-events: none; }
 .zone-dots-r { position: absolute; inset: 0; background: var(--dots-red); opacity: 0.6; pointer-events: none; }
@@ -377,8 +377,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
 }
 .zone-arrow-up { color: var(--ink); animation: bobbyu 1.6s ease-in-out infinite; }
 .zone-arrow-down { color: var(--red); animation: bobbyd 1.6s ease-in-out infinite; }
+.zone-arrow-left { color: var(--red); animation: bobbyl 1.6s ease-in-out infinite; }
+.zone-arrow-right { color: var(--ink); animation: bobbyr 1.6s ease-in-out infinite; }
 @keyframes bobbyu { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
 @keyframes bobbyd { 0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)} }
+@keyframes bobbyl { 0%,100%{transform:translateX(0)} 50%{transform:translateX(-7px)} }
+@keyframes bobbyr { 0%,100%{transform:translateX(0)} 50%{transform:translateX(7px)} }
 
 .zone-label { font-family: var(--font-bang); font-size: 13px; letter-spacing: 2px; text-align: center; position: relative; z-index: 1; line-height: 1.2; }
 .zone-label-top { font-size: 10px; opacity: 0.55; text-transform: uppercase; letter-spacing: 1.5px; }
@@ -959,13 +963,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
   </div>
   <!-- BODY -->
   <div class="game-body">
-    <!-- LEFT: GOT IT -->
-    <button class="game-zone game-zone-left" onclick="registerCorrect()" id="zone-left">
-      <div class="zone-dots-y"></div>
+    <!-- LEFT: PASS (tilt left ear down) -->
+    <button class="game-zone game-zone-left" onclick="registerPass()" id="zone-left">
+      <div class="zone-dots-r"></div>
       <div class="zone-label">
-        <div class="zone-label-top">TILT BACK</div>
-        <div class="zone-arrow zone-arrow-up">↑</div>
-        <div class="zone-label-main yl">GOT IT!</div>
+        <div class="zone-label-top">TILT LEFT</div>
+        <div class="zone-arrow zone-arrow-left">←</div>
+        <div class="zone-label-main rd">PASS!</div>
         <div class="zone-label-sub">or tap this zone</div>
       </div>
     </button>
@@ -989,13 +993,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ink)
         <div class="fx-word fx-c" id="fx-word">NICE!</div>
       </div>
     </div>
-    <!-- RIGHT: PASS -->
-    <button class="game-zone game-zone-right" onclick="registerPass()" id="zone-right">
-      <div class="zone-dots-r"></div>
+    <!-- RIGHT: GOT IT (tilt right ear down) -->
+    <button class="game-zone game-zone-right" onclick="registerCorrect()" id="zone-right">
+      <div class="zone-dots-y"></div>
       <div class="zone-label">
-        <div class="zone-label-top">TILT FORWARD</div>
-        <div class="zone-arrow zone-arrow-down" style="color:var(--red)">↓</div>
-        <div class="zone-label-main rd">PASS!</div>
+        <div class="zone-label-top">TILT RIGHT</div>
+        <div class="zone-arrow zone-arrow-right">→</div>
+        <div class="zone-label-main yl">GOT IT!</div>
         <div class="zone-label-sub">or tap this zone</div>
       </div>
     </button>
@@ -1533,14 +1537,13 @@ function requestPermission(){
 }
 function startWithoutTilt(){ S.tiltEnabled=false; beginCountdown(); }
 
-// Read tilt signal from a DeviceMotionEvent. We use the Z component of
-// accelerationIncludingGravity (gravity projected along the screen normal)
-// because it tracks head-tilt cleanly in landscape without the ±90° gimbal
-// lock that plagues Euler gamma.
+// Compute a roll angle (degrees, -180..+180) from gravity in the X-Y device
+// plane. Tilting the phone sideways while held in landscape rotates this
+// angle smoothly with no gimbal lock at any rest pose.
 function getTiltRaw(e){
   const g = e.accelerationIncludingGravity;
-  if(g && typeof g.z==='number') return g.z;
-  return null;
+  if(!g || typeof g.x!=='number' || typeof g.y!=='number') return null;
+  return Math.atan2(g.x, g.y) * 180 / Math.PI;
 }
 
 const DEBUG_KEY='hs.debug';
@@ -1607,18 +1610,19 @@ function updateTiltDebug(e){
   const dbg=document.getElementById('tilt-debug');
   if(!dbg) return;
   dbg.classList.add('on');
-  const {axisSign,rest,thCorrect,thPass}=S.calib;
+  const {axisSign,rest,thCorrect}=S.calib;
   const raw=(e && typeof getTiltRaw==='function') ? getTiltRaw(e) : null;
-  const v=(raw===null) ? NaN : raw*axisSign - rest;
+  let v=(raw===null) ? NaN : raw*axisSign - rest;
+  if(!isNaN(v)){ while(v>180) v-=360; while(v<-180) v+=360; }
   const angle=(screen.orientation && typeof screen.orientation.angle==='number')
     ? screen.orientation.angle
     : (typeof window.orientation==='number' ? window.orientation : '?');
   const g=e && e.accelerationIncludingGravity;
   const calibrating = S.calib.listener ? 'CALIBRATING' : 'live';
   dbg.textContent =
-    'angle:' + angle + '  sensor:motion  sign:' + axisSign + '\n' +
-    'gz:' + (raw===null?'--':raw.toFixed(2)) + '  rest:' + rest.toFixed(2) + '\n' +
-    'v:' + (isNaN(v)?'--':v.toFixed(2)) + '  th:±' + (thCorrect-rest).toFixed(2) + '\n' +
+    'angle:' + angle + '  sensor:roll  sign:' + axisSign + '\n' +
+    'roll:' + (raw===null?'--':raw.toFixed(1)+'°') + '  rest:' + rest.toFixed(1)+'°' + '\n' +
+    'v:' + (isNaN(v)?'--':v.toFixed(1)+'°') + '  th:±' + (thCorrect-rest).toFixed(0)+'°' + '\n' +
     'motion:' + S.tiltMotion + '  ' + calibrating + '\n' +
     'gx:' + (g && typeof g.x==='number'?g.x.toFixed(2):'--') +
     '  gy:' + (g && typeof g.y==='number'?g.y.toFixed(2):'--');
@@ -1631,20 +1635,21 @@ function invertTilt(){
   // Flip the current session too: sign, rest, thresholds all negate
   S.calib.axisSign *= -1;
   S.calib.rest *= -1;
-  S.calib.thCorrect = S.calib.rest + 4.14;
-  S.calib.thPass = S.calib.rest - 4.14;
+  S.calib.thCorrect = S.calib.rest + 25;
+  S.calib.thPass = S.calib.rest - 25;
   S.tiltMotion = 0;
   const btn=document.querySelector('.game-swap-btn');
   if(btn) btn.classList.toggle('flipped', next==='1');
 }
 
 function detectTiltAxis(){
-  // Using gravity-z from DeviceMotionEvent. With phone to forehead in
-  // landscape (neutral pose ~ gamma -90), tilting the top of the phone
-  // FORWARD swings gz positive. Default sign=+1 so forward = CORRECT.
+  // Using a roll angle derived from gravity-x/y. Default sign assumes rolling
+  // the RIGHT side of the phone up makes the angle swing positive, which we
+  // want to map to CORRECT. Devices that report it inverted can flip via the
+  // SWAP button (persisted in localStorage).
   let sign = 1;
   if(localStorage.getItem('hs.tiltInvert')==='1') sign *= -1;
-  return {axis:'gz', sign};
+  return {axis:'roll', sign};
 }
 
 function beginCountdown(){
@@ -1695,9 +1700,9 @@ function finalizeCalibration(){
     rest=sorted[Math.floor(sorted.length/2)];
   }
   S.calib.rest=rest;
-  // 25° tilt on gravity-z: gz = 9.8 * sin(25°) ≈ 4.14 m/s²
-  S.calib.thCorrect=rest+4.14;
-  S.calib.thPass=rest-4.14;
+  // ±25 degrees of roll from the calibrated rest pose
+  S.calib.thCorrect=rest+25;
+  S.calib.thPass=rest-25;
 }
 
 function launchGame(){
@@ -1792,8 +1797,13 @@ function onTilt(e){
   if(DEBUG) updateTiltDebug(e);
   // Still warming up — calibration listener is still collecting samples
   if(S.calib.listener) return;
-  const v=raw*S.calib.axisSign-S.calib.rest;
-  const DEAD=1.0;
+  // Roll angle is cyclic in [-180, +180]. Normalize the delta from rest into
+  // that range so a tiny rotation near the wraparound seam doesn't appear as
+  // a 359° swing in the opposite direction.
+  let v=raw*S.calib.axisSign-S.calib.rest;
+  while(v>180) v-=360;
+  while(v<-180) v+=360;
+  const DEAD=6;
 
   // Back near rest — reset so the next nod starts fresh
   if(Math.abs(v)<DEAD){ S.tiltMotion=0; return; }
